@@ -62,8 +62,9 @@ CLoginServer::~CLoginServer()
 	SAFEDELETE(m_pPartyManager);
 }
 //=============================================================================
-BOOL CLoginServer::InitServer()
+BOOL CLoginServer::InitServer(HWND m_hwnd)
 {
+	hWnd = m_hwnd;
 	DWORD Time;
 
 	if (_InitWinsock() == FALSE) {

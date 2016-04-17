@@ -66,6 +66,9 @@
     <ClCompile Include="cLogging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cServerTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="char\Client.h">
@@ -129,6 +132,9 @@
       <Filter>res</Filter>
     </ClInclude>
     <ClInclude Include="cLogging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cServerTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

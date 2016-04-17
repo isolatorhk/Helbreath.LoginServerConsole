@@ -82,7 +82,7 @@ public:
 	void CreateNewItem(cItem *Item, DWORD CharID, MYSQL myConn);
 	void OnUserAccept(HWND hWnd);
 	void OnGateServerAccept(HWND hWnd);
-	BOOL InitServer();
+	BOOL InitServer(HWND hwnd);
 	void SetAccountServerChangeStatus(char *Data, BOOL IsOnServerChange);
 	BOOL GetMsgQuene(char * pData, DWORD * pMsgSize, int * pIndex, char * pKey);
 	BOOL PutMsgQuene(char * pData, DWORD dwMsgSize, int iIndex, char cKey);
@@ -124,13 +124,14 @@ public:
 	DWORD			dwShutdownInterval;
 	BYTE			bShutDownMsgIndex;
 	BOOL			bConfigsUpdated;
+	HWND hWnd;
 
 	//timeGetTime for intervals on the OnTimer function
 	DWORD           KeyDownTimer, mySQLTimer, mySQLdbRepairTimer, mySQLdbOptimizeTimer, CheckAccountsTimer;
 };
 //=============================================================================
 extern MMRESULT  Timer;
-extern HWND      hWnd, LogWindow;
+//extern HWND      hWnd, LogWindow;
 extern XSocket   *ClientSocket[MAXCLIENTS], *GameServerSocket[MAXGAMESERVERSOCKETS];
 extern WORD      ActiveAccounts, PeakPeopleOnline;
 extern DWORD     TotalAccounts;

@@ -24,6 +24,7 @@
     <ClCompile Include="char\item\Item.cpp" />
     <ClCompile Include="char\PartyManager.cpp" />
     <ClCompile Include="cLogging.cpp" />
+    <ClCompile Include="cServerTimer.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="LoginServer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="char\item\Item.h" />
     <ClInclude Include="char\PartyManager.h" />
     <ClInclude Include="cLogging.h" />
+    <ClInclude Include="cServerTimer.h" />
     <ClInclude Include="defs.hpp" />
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="LoginServer.h" />

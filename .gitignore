@@ -1,3 +1,6 @@
+# Logs
+*.log
+
 # User-specific files
 *.suo
 *.user

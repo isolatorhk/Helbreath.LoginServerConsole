@@ -1,8 +1,10 @@
 #pragma once
+#include "windows.h"
+
 class cServerTimer
 {
 public:
 	cServerTimer();
-	~cServerTimer();
+	void _StopTimer(MMRESULT timerid);
+	~cServerTimer();	
 };
-

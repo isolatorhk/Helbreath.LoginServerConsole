@@ -1,4 +1,5 @@
 #include "LoginServer.h"
+
 //=============================================================================
 CLoginServer::CLoginServer()
 {
@@ -36,7 +37,9 @@ CLoginServer::~CLoginServer()
 	WORD w;
 	DWORD dw;
 
-	if (Timer != NULL) _StopTimer(Timer);
+	if (Timer != NULL) {
+		serverTimer->_StopTimer(Timer);
+	}
 	mysql_close(&mySQL);
 	for (w = 0; w < MAXCLIENTS; w++) SAFEDELETE(ClientSocket[w]);
 	for (w = 0; w < MAXGAMESERVERS; w++) SAFEDELETE(GameServer[w]);
@@ -62,7 +65,8 @@ CLoginServer::~CLoginServer()
 	SAFEDELETE(m_pPartyManager);
 }
 //=============================================================================
-BOOL CLoginServer::InitServer(HWND m_hwnd)
+
+BOOL CLoginServer::InitServer(HWND m_hwnd, MMRESULT m_Timer)
 {
 	hWnd = m_hwnd;
 	DWORD Time;
@@ -87,7 +91,7 @@ BOOL CLoginServer::InitServer(HWND m_hwnd)
 	//OptimizeDatabase(Time);
 	RepairDatabase(Time);
 	CheckActiveAccountsNumber(Time);
-	Timer = _StartTimer(MAINTIMERSIZE);
+	Timer = m_Timer;
 	return TRUE;
 }
 //=============================================================================
@@ -366,18 +370,18 @@ void CLoginServer::MysqlAutoFix()
 		}
 		else
 		{
-			_StopTimer(Timer);
+			serverTimer->_StopTimer(Timer);
 			Timer = NULL;
 			MySqlAutoFixNum = 1;
 			SafeCopy(Txt100, "-Server was sucessfully restarted!");
 			PutLogList(Txt100);
 			mySQLAutoFixProcess = FALSE;
-			Timer = _StartTimer(MAINTIMERSIZE);
+			//Timer = serverTimer->_StartTimer(MAINTIMERSIZE);
 		}
 	}
 	else
 	{
-		_StopTimer(Timer);
+		serverTimer->_StopTimer(Timer);
 		Timer = NULL;
 		SafeCopy(Txt100, "(!!!) CRITICAL ERROR! Impossible to restart MySql database.");
 		PutLogList(Txt100, WARN_MSG);

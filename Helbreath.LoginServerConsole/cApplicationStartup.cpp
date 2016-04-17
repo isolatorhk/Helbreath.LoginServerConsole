@@ -1,6 +1,8 @@
 #include "cApplicationStartup.h"
 #include <exception>
 
+CLoginServer *loginServer;
+
 LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) {
@@ -56,13 +58,17 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 	return NULL;
 }
 
+void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2)
+{
+	loginServer->OnTimer();
+}
+
 void cApplicationStartup::Startup()
 {
 	cLogging::LogToConsole("Starting up Helbreath Login Server \n");
 	try {
 		ConnectToDatabase();
-		StartLoginServer();
-		//loginServer->DoInitialSetup();
+		StartLoginServer();		
 	}
 	catch (std::exception &e) {
 		cLogging::LogToConsole((char*)e.what());
@@ -113,7 +119,8 @@ void cApplicationStartup::StartLoginServer()
 {
 	cLogging::LogToConsole("Login Server initialization \n");
 	HWND hwnd = CreateBackgroundWindow();
-	if (!loginServer->InitServer(hwnd)) {
+	MMRESULT timer = _StartTimer();
+	if (!loginServer->InitServer(hwnd, timer)) {
 		//SAFEDELETE(Server);
 	}
 }
@@ -126,7 +133,7 @@ HWND cApplicationStartup::CreateBackgroundWindow()
 	char cTitle[100];
 
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
-	wndclass.lpfnWndProc = (WNDPROC)BackgroundWindowProcess;
+	wndclass.lpfnWndProc = &BackgroundWindowProcess;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = NULL;
@@ -171,9 +178,21 @@ HWND cApplicationStartup::CreateBackgroundWindow()
 	return Window;
 }
 
+MMRESULT cApplicationStartup::_StartTimer()
+{
+	TIMECAPS caps;
+	MMRESULT timerid;
+
+	timeGetDevCaps(&caps, sizeof(caps));
+	timeBeginPeriod(caps.wPeriodMin);
+	timerid = timeSetEvent(MAINTIMERSIZE, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
+	return timerid;
+}
+
 cApplicationStartup::cApplicationStartup()
 {
 	loginServer = new CLoginServer;
+	serverTimer = new cServerTimer;
 }
 
 

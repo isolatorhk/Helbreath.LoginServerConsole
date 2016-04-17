@@ -17,6 +17,8 @@
 #include "char\PartyManager.h"
 #include "char\item\Item.h"
 #include "cLogging.h"
+#include "cServerTimer.h"
+
 //using namespace std;
 //=============================================================================
 class CLoginServer
@@ -82,7 +84,7 @@ public:
 	void CreateNewItem(cItem *Item, DWORD CharID, MYSQL myConn);
 	void OnUserAccept(HWND hWnd);
 	void OnGateServerAccept(HWND hWnd);
-	BOOL InitServer(HWND hwnd);
+	BOOL InitServer(HWND m_hwnd, MMRESULT m_Timer);
 	void SetAccountServerChangeStatus(char *Data, BOOL IsOnServerChange);
 	BOOL GetMsgQuene(char * pData, DWORD * pMsgSize, int * pIndex, char * pKey);
 	BOOL PutMsgQuene(char * pData, DWORD dwMsgSize, int iIndex, char cKey);
@@ -125,12 +127,13 @@ public:
 	BYTE			bShutDownMsgIndex;
 	BOOL			bConfigsUpdated;
 	HWND hWnd;
-
+	MMRESULT Timer;
+	cServerTimer *serverTimer;
 	//timeGetTime for intervals on the OnTimer function
 	DWORD           KeyDownTimer, mySQLTimer, mySQLdbRepairTimer, mySQLdbOptimizeTimer, CheckAccountsTimer;
 };
 //=============================================================================
-extern MMRESULT  Timer;
+//extern MMRESULT  Timer;
 //extern HWND      hWnd, LogWindow;
 extern XSocket   *ClientSocket[MAXCLIENTS], *GameServerSocket[MAXGAMESERVERSOCKETS];
 extern WORD      ActiveAccounts, PeakPeopleOnline;

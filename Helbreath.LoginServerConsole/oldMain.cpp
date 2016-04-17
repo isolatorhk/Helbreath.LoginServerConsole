@@ -129,34 +129,35 @@ void OnPaint()
 	EndPaint(hWnd, &ps);
 }
 //=============================================================================
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2)
-{
-	Server->OnTimer();
-}
+//void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2)
+//{
+//	Server->OnTimer();
+//}
 //=============================================================================
-MMRESULT _StartTimer(DWORD dwTime)
-{
-	TIMECAPS caps;
-	MMRESULT timerid;
-
-	timeGetDevCaps(&caps, sizeof(caps));
-	timeBeginPeriod(caps.wPeriodMin);
-	timerid = timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
-
-	return timerid;
-}
+//MMRESULT _StartTimer(DWORD dwTime)
+//{
+//	TIMECAPS caps;
+//	MMRESULT timerid;
+//
+//	timeGetDevCaps(&caps, sizeof(caps));
+//	timeBeginPeriod(caps.wPeriodMin);
+//	timerid = timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
+//
+//	return timerid;
+//}
 //=============================================================================
-void _StopTimer(MMRESULT timerid)
-{
-	TIMECAPS caps;
 
-	if (timerid != 0) {
-		timeKillEvent(timerid);
-		timerid = 0;
-		timeGetDevCaps(&caps, sizeof(caps));
-		timeEndPeriod(caps.wPeriodMin);
-	}
-}
+//void _StopTimer(MMRESULT timerid)
+//{
+//	TIMECAPS caps;
+//
+//	if (timerid != 0) {
+//		timeKillEvent(timerid);
+//		timerid = 0;
+//		timeGetDevCaps(&caps, sizeof(caps));
+//		timeEndPeriod(caps.wPeriodMin);
+//	}
+//}
 //=============================================================================
 void OnDestroy()
 {

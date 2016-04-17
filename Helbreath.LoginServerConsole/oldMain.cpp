@@ -181,51 +181,6 @@ bool ConnectToDatabase() {
 	if (!Server->InitServer()) SAFEDELETE(Server);
 }
 
-int CALLBACK LoginDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-
-	case WM_INITDIALOG:
-		SetFocus(GetDlgItem(hDlg, IDC_EDIT1));
-		break;
-
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDCANCEL:
-			EndDialog(hDlg, TRUE);
-			OnDestroy();
-			return TRUE;
-
-		case IDOK:
-			if (Server == NULL) throw "Unknown error occured! Server = NULL";
-			GetDlgItemText(hDlg, IDC_EDIT1, Server->mySqlUser, 20);
-			GetDlgItemText(hDlg, IDC_EDIT2, Server->mySqlPwd, 20);
-			UINT iResult = 0;
-			mysql_init(&mySQL);
-			if (!mysql_real_connect(&mySQL, Server->mySqlAddress, Server->mySqlUser, Server->mySqlPwd, "helbreath", Server->mySqlPort, NULL, NULL)) {
-				iResult = Server->MyAux_Get_Error(&mySQL);
-				mysql_close(&mySQL);
-			}
-			if (iResult != NULL) {
-				if (iResult == 2003) PutLogList("(!!!) mySql server seems to be offline, please check the IP", WARN_MSG);
-				SetDlgItemText(hDlg, IDC_EDIT1, NULL);
-				SetDlgItemText(hDlg, IDC_EDIT2, NULL);
-				SetFocus(GetDlgItem(hDlg, IDC_EDIT1));
-				mysql_close(&mySQL);
-				return TRUE;
-			}
-			PutLogList("-Connection to mySQL database was sucessfully established!");
-			EndDialog(hDlg, TRUE);
-			if (!Server->InitServer()) SAFEDELETE(Server);
-			break;
-		}
-		break;
-	}
-
-	return FALSE;
-}
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

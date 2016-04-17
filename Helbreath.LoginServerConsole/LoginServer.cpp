@@ -62,19 +62,6 @@ CLoginServer::~CLoginServer()
 	SAFEDELETE(m_pPartyManager);
 }
 //=============================================================================
-BOOL CLoginServer::DoInitialSetup()
-{
-	ZeroMemory(mySqlUser, sizeof(mySqlUser));
-	ZeroMemory(mySqlPwd, sizeof(mySqlPwd));
-	if (!ReadProgramConfigFile("LServer.cfg")) {
-		return FALSE;
-	}
-	cLogging::LogToConsole("Connecting to mySql database... \n");
-	PutLogList("(!) Connecting to mySql database...");
-	//ConnectToDatabase();
-	return true;
-}
-//=============================================================================
 BOOL CLoginServer::InitServer()
 {
 	DWORD Time;

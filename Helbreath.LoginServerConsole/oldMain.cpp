@@ -163,23 +163,6 @@ void OnDestroy()
 	SAFEDELETE(Server);
 	PostQuitMessage(0);
 }
-//=============================================================================
-bool ConnectToDatabase() {
-	if (Server == NULL) throw "Unknown error occured! Server = NULL";
-	UINT iResult = 0;
-	mysql_init(&mySQL);
-	if (!mysql_real_connect(&mySQL, Server->mySqlAddress, Server->mySqlUser, Server->mySqlPwd, "helbreath", Server->mySqlPort, NULL, NULL)) {
-		iResult = Server->MyAux_Get_Error(&mySQL);
-		mysql_close(&mySQL);
-	}
-	if (iResult != NULL) {
-		if (iResult == 2003) PutLogList("(!!!) mySql server seems to be offline, please check the IP", WARN_MSG);
-		mysql_close(&mySQL);
-		return TRUE;
-	}
-	PutLogList("-Connection to mySQL database was sucessfully established!");
-	if (!Server->InitServer()) SAFEDELETE(Server);
-}
 
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -309,7 +292,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SetRect(&SepRect, 656, 0, 660, 600);
 	MSG Message;
 	Server = new CLoginServer();
-	if (!Server->DoInitialSetup()) SAFEDELETE(Server);
+	//if (!Server->DoInitialSetup()) SAFEDELETE(Server);
 	while (1)
 	{
 		if (PeekMessage(&Message, NULL, 0, 0, PM_NOREMOVE))

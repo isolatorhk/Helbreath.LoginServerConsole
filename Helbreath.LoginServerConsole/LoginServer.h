@@ -82,7 +82,6 @@ public:
 	void CreateNewItem(cItem *Item, DWORD CharID, MYSQL myConn);
 	void OnUserAccept(HWND hWnd);
 	void OnGateServerAccept(HWND hWnd);
-	BOOL DoInitialSetup();
 	BOOL InitServer();
 	void SetAccountServerChangeStatus(char *Data, BOOL IsOnServerChange);
 	BOOL GetMsgQuene(char * pData, DWORD * pMsgSize, int * pIndex, char * pKey);

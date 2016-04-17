@@ -15,5 +15,4 @@ void	 PutLogFileList(char * cStr, char *FileName = NULL);
 void	 PutLogList(char * cMsg, BYTE MsgLvl = NULL, BOOL PutOnFile = NULL, char *FileName = NULL);
 void	 MakeGoodName(char *dest, char *source);
 void	 Delay(DWORD nTimeMs);
-bool	 ConnectToDatabase();
 #endif

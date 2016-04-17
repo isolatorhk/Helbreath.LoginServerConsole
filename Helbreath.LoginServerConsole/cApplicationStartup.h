@@ -8,6 +8,7 @@ class cApplicationStartup
 {
 public:
 	void Startup();
+	void ConnectToDatabase();
 	cApplicationStartup();
 	~cApplicationStartup();
 private:

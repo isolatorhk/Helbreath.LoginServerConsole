@@ -3,8 +3,6 @@
 #include "..\Shared\common.h"
 
 void 	 SafeCopy(char *c1, char *c2, DWORD lenght = 0);
-//MMRESULT _StartTimer(DWORD dwTime);
-//void   	 _StopTimer(MMRESULT timerid);
 BOOL   	 IsSame(char *c1, char *c2);
 BYTE	 bGetOffsetValue(char * cp, DWORD offset);
 WORD	 wGetOffsetValue(char * cp, DWORD offset);

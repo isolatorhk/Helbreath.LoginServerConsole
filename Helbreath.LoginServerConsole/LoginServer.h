@@ -133,8 +133,6 @@ public:
 	DWORD           KeyDownTimer, mySQLTimer, mySQLdbRepairTimer, mySQLdbOptimizeTimer, CheckAccountsTimer;
 };
 //=============================================================================
-//extern MMRESULT  Timer;
-//extern HWND      hWnd, LogWindow;
 extern XSocket   *ClientSocket[MAXCLIENTS], *GameServerSocket[MAXGAMESERVERSOCKETS];
 extern WORD      ActiveAccounts, PeakPeopleOnline;
 extern DWORD     TotalAccounts;

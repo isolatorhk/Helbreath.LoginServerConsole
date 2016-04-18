@@ -31,6 +31,9 @@
 *.a
 *.lib
 
+# unignore
+!Helbreath.LoginServerConsole/libs/*.lib
+
 # Executables
 *.exe
 *.out

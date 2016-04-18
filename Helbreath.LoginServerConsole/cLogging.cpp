@@ -3,9 +3,10 @@
 #include "defs.hpp"
 #include <stdio.h>
 #include "DIRECT.H"
+#include <string>
 
 void cLogging::Log(char * cMsg, BYTE MsgLvl, BOOL PutOnFile, char * FileName)
-{
+{	
 	LogToFile(cMsg, FileName);
 	LogToConsole(cMsg);
 }
@@ -17,7 +18,11 @@ void cLogging::LogToFile(char * cStr, char *FileName)
 
 void cLogging::LogToConsole(char * cStr)
 {
-	printf(cStr);
+	char cBuffer[MAXLOGLINESIZE + 100];
+	ZeroMemory(cBuffer, sizeof(cBuffer));
+	strcat(cBuffer, cStr);
+	strcat(cBuffer, " \n");
+	printf(cBuffer);
 }
 
 cLogging::cLogging()

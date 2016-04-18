@@ -36,7 +36,7 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_USER_ACCEPT:
-		//loginServer->OnUserAccept(hWnd);
+		loginServer->OnUserAccept(hWnd);
 		break;
 
 	case WM_GATESERVER_ACCEPT:
@@ -45,10 +45,10 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 
 	default:
 		if ((message >= WM_ONCLIENTSOCKETEVENT) && (message < WM_ONCLIENTSOCKETEVENT + MAXCLIENTS)) {
-			//Server->OnClientSocketEvent(message, wParam, lParam);
+			//loginServer->OnClientSocketEvent(message, wParam, lParam);
 		}
 		else if ((message >= WM_ONGAMESERVERSOCKETEVENT) && (message < WM_ONGAMESERVERSOCKETEVENT + MAXGAMESERVERSOCKETS)) {
-			//Server->OnGameServerSocketEvent(message, wParam, lParam);
+			loginServer->OnGameServerSocketEvent(message, wParam, lParam);
 		}
 		else {
 			return DefWindowProc(hWnd, message, wParam, lParam);

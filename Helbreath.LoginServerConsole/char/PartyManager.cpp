@@ -5,7 +5,7 @@
 #include "PartyManager.h"
 
 extern char G_cTxt[120];
-extern void PutLogList(char * cMsg);
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

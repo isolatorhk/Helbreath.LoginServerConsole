@@ -1,7 +1,8 @@
 #pragma once
 class cLogging
 {
-public:
+public:		
+	static void Log(char * cMsg, BYTE MsgLvl = NULL, BOOL PutOnFile = NULL, char *FileName = NULL);
 	static void LogToFile(char * cStr, char *FileName = NULL);
 	static void LogToConsole(char * cStr);
 	cLogging();

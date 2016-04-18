@@ -51,7 +51,7 @@ BOOL XSocket::bInitBufferSize(DWORD dwBufferSize)
 {
 	SAFEDELETE(m_pRcvBuffer);
 	SAFEDELETE(m_pSndBuffer);
-	PutLogList("bInitBufferSize");
+	cLogging::Log("bInitBufferSize");
 
 	m_pRcvBuffer = new char[dwBufferSize+8];
 	if (m_pRcvBuffer == NULL) return FALSE;
@@ -67,7 +67,7 @@ BOOL XSocket::bInitBufferSize(DWORD dwBufferSize)
 int XSocket::iOnSocketEvent(WPARAM wParam, LPARAM lParam)
 {
  int WSAEvent;
- PutLogList("iOnSocketEvent");
+ cLogging::Log("iOnSocketEvent");
 	if (m_cType != XSOCK_NORMALSOCK) return XSOCKEVENT_SOCKETMISMATCH;
 	if (m_cType == NULL) return XSOCKEVENT_NOTINITIALIZED;
 
@@ -114,7 +114,7 @@ BOOL XSocket::bConnect(char * pAddr, int iPort, unsigned int uiMsg)
  u_long          arg;
  int             iRet;
  DWORD			 dwOpt;
- PutLogList("bConnect");
+ cLogging::Log("bConnect");
 	if (m_cType == XSOCK_LISTENSOCK) return FALSE;
 	if (m_Sock  != INVALID_SOCKET) closesocket(m_Sock);
 
@@ -156,7 +156,7 @@ int XSocket::_iOnRead()
 {
  int iRet, WSAErr;
  WORD  * wp;
- PutLogList("_iOnRead");
+ cLogging::Log("_iOnRead");
 	if (m_cStatus == XSOCKSTATUS_READINGHEADER) {
 
 		iRet = recv(m_Sock, (char *)(m_pRcvBuffer + m_dwTotalReadSize), m_dwReadSize, 0);
@@ -235,7 +235,7 @@ int XSocket::_iOnRead()
 int XSocket::_iSend(char * cData, int iSize, BOOL bSaveFlag)
 {
  int  iOutLen, iRet, WSAErr;
- PutLogList("_iSend");
+ cLogging::Log("_iSend");
 	if (m_pUnsentDataList[m_sHead] != NULL) {
 		if (bSaveFlag == TRUE) {
 			iRet = _iRegisterUnsentData(cData, iSize);
@@ -289,7 +289,7 @@ int XSocket::_iSend(char * cData, int iSize, BOOL bSaveFlag)
 int XSocket::_iSend_ForInternalUse(char * cData, int iSize)
 {
  int  iOutLen, iRet, WSAErr;
- PutLogList("_iSend_ForInternalUse");
+ cLogging::Log("_iSend_ForInternalUse");
 	iOutLen = 0;
 	while (iOutLen < iSize) {
 
@@ -312,7 +312,7 @@ int XSocket::_iSend_ForInternalUse(char * cData, int iSize)
 //=============================================================================
 int XSocket::_iRegisterUnsentData(char * cData, int iSize)
 {
-	PutLogList("_iRegisterUnsentData");
+	cLogging::Log("_iRegisterUnsentData");
 	if (m_pUnsentDataList[m_sTail] != NULL) return 0;
 
 	m_pUnsentDataList[m_sTail] = new char[iSize];
@@ -331,7 +331,7 @@ int XSocket::_iSendUnsentData()
 {
  int iRet;
  char * pTemp;
- PutLogList("_iSendUnsentData");
+ cLogging::Log("_iSendUnsentData");
 	while (m_pUnsentDataList[m_sHead] != NULL) {
 
 		iRet = _iSend_ForInternalUse(m_pUnsentDataList[m_sHead], m_iUnsentDataSize[m_sHead]);
@@ -365,7 +365,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey, BOOL log)
  int    iRet;
  DWORD  i;
  char   m_msgBuff[50000], dataBuff[50000];
- PutLogList("iSendMsg");
+ cLogging::Log("iSendMsg");
         if (dwSize > m_dwBufferSize) return XSOCKEVENT_MSGSIZETOOLARGE;
 	if (m_cType != XSOCK_NORMALSOCK) return XSOCKEVENT_SOCKETMISMATCH;
 	if (m_cType == NULL) return XSOCKEVENT_NOTINITIALIZED;
@@ -402,7 +402,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey, BOOL log)
 BOOL XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg)
 {
  SOCKADDR_IN	 saTemp;
- PutLogList("bListen");
+ cLogging::Log("bListen");
 	if (m_cType != NULL) return FALSE;
 	if (m_Sock  != INVALID_SOCKET) closesocket(m_Sock);
 
@@ -438,7 +438,7 @@ BOOL XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg)
  sockaddr		Addr;
  register int	iLength;
  DWORD			dwOpt;
- PutLogList("bAccept");
+ cLogging::Log("bAccept");
 	if (m_cType != XSOCK_LISTENSOCK) return FALSE;
 	if (pXSock == NULL) return FALSE;
 
@@ -466,7 +466,7 @@ void XSocket::_CloseConn()
  char cTmp[100];
  BOOL bFlag = TRUE;
  int  iRet;
- PutLogList("_CloseConn");
+ cLogging::Log("_CloseConn");
 	if (m_Sock == INVALID_SOCKET) return;
 
 	shutdown(m_Sock, 0x01);
@@ -483,7 +483,7 @@ void XSocket::_CloseConn()
 //=============================================================================
 SOCKET XSocket::iGetSocket()
 {
-	PutLogList("iGetSocket");
+	cLogging::Log("iGetSocket");
 	return m_Sock;
 }
 //=============================================================================
@@ -493,7 +493,7 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey)
  DWORD  dwSize;
  register DWORD i;
  char cKey;
- PutLogList("pGetRcvDataPointer");
+ cLogging::Log("pGetRcvDataPointer");
 	cKey = m_pRcvBuffer[0];
 	if (pKey != NULL) *pKey = cKey;
 
@@ -518,7 +518,7 @@ BOOL _InitWinsock()
  int     iErrCode;
  WORD	 wVersionRequested;
  WSADATA wsaData;
- PutLogList("_InitWinsock");
+ cLogging::Log("_InitWinsock");
 	wVersionRequested = MAKEWORD( 2, 2 );
 	iErrCode = WSAStartup( wVersionRequested, &wsaData );
 	if ( iErrCode ) return FALSE;
@@ -528,7 +528,7 @@ BOOL _InitWinsock()
 //=============================================================================
 void _TermWinsock()
 {
-	PutLogList("_TermWinsock");
+	cLogging::Log("_TermWinsock");
 	WSACleanup();
 }
 //=============================================================================
@@ -536,7 +536,7 @@ int XSocket::iGetPeerAddress(char * pAddrString)
 {
  SOCKADDR_IN sockaddr;
  int iRet, iLen;
- PutLogList("iGetPeerAddress");
+ cLogging::Log("iGetPeerAddress");
  iLen = sizeof(sockaddr);
 	iRet = getpeername(m_Sock, (struct sockaddr *)&sockaddr, &iLen);
 	strcpy(pAddrString, (const char *)inet_ntoa(sockaddr.sin_addr));

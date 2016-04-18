@@ -17,6 +17,7 @@
 #include <malloc.h>
 #include "..\oldMain.h"
 #include "..\defs.hpp"
+#include "..\cLogging.h"
 
 #define XSOCK_LISTENSOCK			1
 #define XSOCK_NORMALSOCK			2				

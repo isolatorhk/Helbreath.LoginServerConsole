@@ -36,11 +36,11 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_USER_ACCEPT:
-		//Server->OnUserAccept(hWnd);
+		//loginServer->OnUserAccept(hWnd);
 		break;
 
 	case WM_GATESERVER_ACCEPT:
-		//Server->OnGateServerAccept(hWnd);
+		loginServer->OnGateServerAccept(hWnd);
 		break;
 
 	default:
@@ -65,15 +65,15 @@ void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw
 
 void cApplicationStartup::Startup()
 {
-	cLogging::LogToConsole("Starting up Helbreath Login Server \n");
+	cLogging::Log("Starting up Helbreath Login Server \n");
 	try {
 		ConnectToDatabase();
 		StartLoginServer();		
 	}
 	catch (std::exception &e) {
-		cLogging::LogToConsole((char*)e.what());
+		cLogging::Log((char*)e.what());
 	}
-	cLogging::LogToConsole("Entering to main loop \n");
+	cLogging::Log("Entering to main loop \n");
 	while (1) {
 		if (PeekMessage(&Message, NULL, 0, 0, PM_NOREMOVE))
 		{
@@ -96,8 +96,8 @@ void cApplicationStartup::ConnectToDatabase()
 		//return FALSE;
 	}
 
-	cLogging::LogToConsole("Connecting to mySql database... \n");
-	PutLogList("(!) Connecting to mySql database...");
+	cLogging::Log("Connecting to mySql database... \n");
+	cLogging::Log("(!) Connecting to mySql database...");
 
 	if (loginServer == NULL) {
 		throw "Unknown error occured! Server = NULL";
@@ -109,15 +109,15 @@ void cApplicationStartup::ConnectToDatabase()
 		mysql_close(&mySQL);
 	}
 	if (iResult != NULL) {
-		if (iResult == 2003) PutLogList("(!!!) mySql server seems to be offline, please check the IP", WARN_MSG);
+		if (iResult == 2003) cLogging::Log("(!!!) mySql server seems to be offline, please check the IP", WARN_MSG);
 		mysql_close(&mySQL);
 	}
-	PutLogList("-Connection to mySQL database was sucessfully established!");
+	cLogging::Log("-Connection to mySQL database was sucessfully established!");
 }
 
 void cApplicationStartup::StartLoginServer()
 {
-	cLogging::LogToConsole("Login Server initialization \n");
+	cLogging::Log("Login Server initialization \n");
 	HWND hwnd = CreateBackgroundWindow();
 	MMRESULT timer = _StartTimer();
 	if (!loginServer->InitServer(hwnd, timer)) {

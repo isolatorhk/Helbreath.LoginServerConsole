@@ -70,26 +70,36 @@ BOOL CLoginServer::InitServer(HWND m_hwnd, MMRESULT m_Timer)
 {
 	hWnd = m_hwnd;
 	DWORD Time;
-
 	if (_InitWinsock() == FALSE) {
-		MessageBox(hWnd, "Socket 1.1 not found! Cannot execute program.", "ERROR", MB_ICONEXCLAMATION | MB_OK);
+		cLogging::Log("Socket 2.2 not found! Cannot execute program. \n");
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	if (!bReadAllConfig()) return FALSE;
-	PutLogList("(!) Done!");
+	if (!bReadAllConfig()) {
+		cLogging::Log("Couldn't read all config files. \n");
+		return FALSE;
+	}
 
+	cLogging::Log("(!) Done!");
+
+	cLogging::Log("Starting main socket \n");
 	MainSocket = new XSocket(hWnd, XSOCKBLOCKLIMIT);
 	MainSocket->bListen(ListenAddress, ListenPort, WM_USER_ACCEPT);
 
+	cLogging::Log("Starting gate server socket \n");
 	GateServerSocket = new XSocket(hWnd, XSOCKBLOCKLIMIT);
 	GateServerSocket->bListen(ListenAddress, GateServerPort, WM_GATESERVER_ACCEPT);
 
-	if (ListenToAllAddresses == TRUE) PutLogList("(!) permitted-address line not found on config., server will be listening to all IPs!", WARN_MSG);
-	PutLogList("-Login server sucessfully started!");
+	if (ListenToAllAddresses == TRUE) {
+		cLogging::Log("(!) permitted-address line not found on config., server will be listening to all IPs!", WARN_MSG);
+	}
+
+	cLogging::Log("Login server sucessfully started! \n");
+	cLogging::Log("-Login server sucessfully started!");
+
 	Time = timeGetTime();
-	//OptimizeDatabase(Time);
-	RepairDatabase(Time);
+	//OptimizeDatabase(Time); // check what is that!
+	RepairDatabase(Time); // check what is that! maybe it usless ?
 	CheckActiveAccountsNumber(Time);
 	Timer = m_Timer;
 	return TRUE;
@@ -132,7 +142,7 @@ void CLoginServer::SendUpdatedConfigToAllServers()
 	WORD w;
 	DWORD *dwp;
 
-	PutLogList("(*) Sending updated configuration to all servers...", INFO_MSG);
+	cLogging::Log("(*) Sending updated configuration to all servers...", INFO_MSG);
 	ZeroMemory(SendBuff, sizeof(SendBuff));
 	dwp = (DWORD*)SendBuff;
 	*dwp = MSGID_UPDATECONFIGFILES;
@@ -141,7 +151,7 @@ void CLoginServer::SendUpdatedConfigToAllServers()
 			GameServer[w]->SendMsg(SendBuff, 4, NULL, FALSE);
 			SendConfigToGS((BYTE)GameServer[w]->SocketIndex[0]);
 		}
-	PutLogList("(*) All servers are updated!", INFO_MSG);
+	cLogging::Log("(*) All servers are updated!", INFO_MSG);
 }
 //=============================================================================
 void CLoginServer::SendConfigToGS(BYTE ID)
@@ -246,12 +256,12 @@ BOOL CLoginServer::ReadProgramConfigFile(char * cFn)
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		PutLogList("(!) Cannot open configuration file.", WARN_MSG);
+		cLogging::Log("(!) Cannot open configuration file.", WARN_MSG);
 		return FALSE;
 	}
 	else {
 		dwFileSize = filesize(pFile);
-		PutLogList("(!) Reading configuration file...");
+		cLogging::Log("(!) Reading configuration file...");
 		cp = new char[dwFileSize + 2];
 		ZeroMemory(cp, dwFileSize + 2);
 		fread(cp, dwFileSize, 1, pFile);
@@ -266,49 +276,49 @@ BOOL CLoginServer::ReadProgramConfigFile(char * cFn)
 				token = pStrTok->pGet();
 				SafeCopy(ListenAddress, token);
 				sprintf(LogBuff, "(*) Login server address : %s", ListenAddress);
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "login-server-port"))
 			{
 				token = pStrTok->pGet();
 				ListenPort = (WORD)atoi(token);
 				sprintf(LogBuff, "(*) Login server port : %u", ListenPort);
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "gate-server-port"))
 			{
 				token = pStrTok->pGet();
 				GateServerPort = (WORD)atoi(token);
 				sprintf(LogBuff, "(*) Gate Server port : %u", GateServerPort);
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "mysql-user"))
 			{
 				token = pStrTok->pGet();
 				SafeCopy(mySqlUser, token);
 				sprintf(LogBuff, "(*) mysql-user has been setup");
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "mysql-password"))
 			{
 				token = pStrTok->pGet();
 				SafeCopy(mySqlPwd, token);
 				sprintf(LogBuff, "(*) mysql-password has been setup");
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "mysql-address"))
 			{
 				token = pStrTok->pGet();
 				SafeCopy(mySqlAddress, token);
 				sprintf(LogBuff, "(*) mySql server address : %s", mySqlAddress);
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "mysql-server-port"))
 			{
 				token = pStrTok->pGet();
 				mySqlPort = (WORD)atoi(token);
 				sprintf(LogBuff, "(*) mySql Server port : %u", mySqlPort);
-				PutLogList(LogBuff);
+				cLogging::Log(LogBuff);
 			}
 			else if (IsSame(token, "permitted-address"))
 			{
@@ -320,7 +330,7 @@ BOOL CLoginServer::ReadProgramConfigFile(char * cFn)
 						if (ListenToAllAddresses == TRUE) ListenToAllAddresses = FALSE;
 						ZeroMemory(LogBuff, sizeof(LogBuff));
 						sprintf(LogBuff, "(*) IP [%s] added to permitted addresses list!", PermittedAddress[b]);
-						PutLogList(LogBuff);
+						cLogging::Log(LogBuff);
 						break;
 					}
 			}
@@ -332,7 +342,7 @@ BOOL CLoginServer::ReadProgramConfigFile(char * cFn)
 	if (pFile != NULL) fclose(pFile);
 	if (strlen(ListenAddress) == 0 || ListenPort <= 0 || mySqlPort <= 0 || GateServerPort <= 0 || strlen(mySqlAddress) == 0)
 	{
-		PutLogList("(!!!) Info is missing in config file, unable to start server", WARN_MSG);
+		cLogging::Log("(!!!) Info is missing in config file, unable to start server", WARN_MSG);
 		return FALSE;
 	}
 	return TRUE;
@@ -348,7 +358,7 @@ UINT CLoginServer::MyAux_Get_Error(struct st_mysql *pmySql)
 	{
 		ZeroMemory(ErrMsg, sizeof(ErrMsg));
 		sprintf(ErrMsg, "(!!!) MySql ERROR: [%lu] - %s", ErrNum, mysql_error(pmySql));
-		PutLogList(ErrMsg, WARN_MSG, TRUE, MYSQL_ERROR_LOGFILE);
+		cLogging::Log(ErrMsg, WARN_MSG, TRUE, MYSQL_ERROR_LOGFILE);
 		return ErrNum;
 	}
 	else return NULL;
@@ -366,7 +376,7 @@ void CLoginServer::MysqlAutoFix()
 		{
 			sprintf(Txt100, "(!!!) Server restart attempt %u of %u has failed...", MySqlAutoFixNum, MAX_MYSQL_RESTART_ATTEMPT);
 			MySqlAutoFixNum++;
-			PutLogList(Txt100, WARN_MSG);
+			cLogging::Log(Txt100, WARN_MSG);
 		}
 		else
 		{
@@ -374,7 +384,7 @@ void CLoginServer::MysqlAutoFix()
 			Timer = NULL;
 			MySqlAutoFixNum = 1;
 			SafeCopy(Txt100, "-Server was sucessfully restarted!");
-			PutLogList(Txt100);
+			cLogging::Log(Txt100);
 			mySQLAutoFixProcess = FALSE;
 			//Timer = serverTimer->_StartTimer(MAINTIMERSIZE);
 		}
@@ -384,7 +394,7 @@ void CLoginServer::MysqlAutoFix()
 		serverTimer->_StopTimer(Timer);
 		Timer = NULL;
 		SafeCopy(Txt100, "(!!!) CRITICAL ERROR! Impossible to restart MySql database.");
-		PutLogList(Txt100, WARN_MSG);
+		cLogging::Log(Txt100, WARN_MSG);
 	}
 	IsThreadMysqlBeingUsed = FALSE;
 }
@@ -398,7 +408,7 @@ BOOL CLoginServer::CheckServerStatus()
 		MyAux_Get_Error(&mySQL);
 		mysql_close(&mySQL);
 		mySQLAutoFixProcess = TRUE;
-		PutLogList("(!!!) MySql is inacessible, trying to restart the server...", WARN_MSG);
+		cLogging::Log("(!!!) MySql is inacessible, trying to restart the server...", WARN_MSG);
 		for (i = 0; i < MAXCLIENTS; i++) SAFEDELETE(ClientSocket[i]);
 		for (i = 0; i < MAXGAMESERVERS; i++) SAFEDELETE(GameServer[i]);
 		for (w = 0; w < MAXGAMESERVERSOCKETS; w++) SAFEDELETE(GameServerSocket[w]);
@@ -419,9 +429,9 @@ BOOL CLoginServer::RestartServer()
 	mysql_init(&mySQL);
 	mysql_real_connect(&mySQL, mySqlAddress, mySqlUser, mySqlPwd, "helbreath", mySqlPort, NULL, NULL);
 
-	if (MyAux_Get_Error(&mySQL) == 0) PutLogList("-Connection to mySQL database was sucessfully established!");
+	if (MyAux_Get_Error(&mySQL) == 0) cLogging::Log("-Connection to mySQL database was sucessfully established!");
 	else {
-		PutLogList("(!!!) Failed to connect to mySQL, please check if the mySQL server is online.", WARN_MSG);
+		cLogging::Log("(!!!) Failed to connect to mySQL, please check if the mySQL server is online.", WARN_MSG);
 		mysql_close(&mySQL);
 		return FALSE;
 	}
@@ -457,7 +467,7 @@ void CLoginServer::OnClientSocketEvent(UINT RcvMsg, WPARAM wParam, LPARAM lParam
 	case XSOCKEVENT_BLOCK:
 	case XSOCKEVENT_CONFIRMCODENOTMATCH:
 	case XSOCKEVENT_MSGSIZETOOLARGE:
-		PutLogList("(!) An error occured in a client socket!", WARN_MSG);
+		cLogging::Log("(!) An error occured in a client socket!", WARN_MSG);
 		CloseClientSocket(user);
 		break;
 
@@ -484,15 +494,15 @@ void CLoginServer::OnGameServerSocketEvent(UINT RcvMsg, WPARAM wParam, LPARAM lP
 	case XSOCKEVENT_SOCKETMISMATCH:
 	case XSOCKEVENT_NOTINITIALIZED:
 	case XSOCKEVENT_SOCKETERROR:
-		PutLogList("(!) An error occured in a gameserver socket!", WARN_MSG);
+		cLogging::Log("(!) An error occured in a gameserver socket!", WARN_MSG);
 		break;
 
 	case XSOCKEVENT_RETRYINGCONNECTION:
-		PutLogList("XSOCKEVENT_RETRYINGCONNECTION");
+		cLogging::Log("XSOCKEVENT_RETRYINGCONNECTION");
 		break;
 
 	case XSOCKEVENT_CONNECTIONESTABLISH:
-		PutLogList("XSOCKEVENT_CONNECTIONESTABLISH");
+		cLogging::Log("XSOCKEVENT_CONNECTIONESTABLISH");
 		break;
 
 	case XSOCKEVENT_SOCKETCLOSED:
@@ -543,7 +553,7 @@ void CLoginServer::OnClientRead(WORD ClientID)
 	if (mysql_num_rows(pQueryResult) > 0) {
 		ZeroMemory(Txt, sizeof(Txt));
 		sprintf(Txt, "(!) IP address [%s] is on the block list and tried to login!", peerAddr);
-		PutLogList(Txt, WARN_MSG, TRUE, HACK_LOGFILE);
+		cLogging::Log(Txt, WARN_MSG, TRUE, HACK_LOGFILE);
 		SAFEDELETE(ClientSocket[ClientID]);
 		SAFEFREERESULT(pQueryResult);
 		mysql_close(&myConn);
@@ -563,7 +573,7 @@ void CLoginServer::OnClientRead(WORD ClientID)
 			mysql_close(&myConn);
 			return;
 		}
-		PutLogList("(!) Processing client login...");
+		cLogging::Log("(!) Processing client login...");
 
 		if (ProcessClientLogin((dataBuff + 6), ClientID, myConn)) {
 			char AccountName[15];
@@ -625,7 +635,7 @@ void CLoginServer::OnClientRead(WORD ClientID)
 	default:
 		char cDump[1000];
 		wsprintf(cDump, " Unknown packet rcvd from client! message received! (0x%.8X)", *dwpMsgID);
-		PutLogList(cDump);
+		cLogging::Log(cDump);
 		PutLogFileList(cDump, CLIENTUNKNOWNMSG_LOGFILE2);
 		for (DWORD i = 0; i < dwMsgSize; i++) if (dataBuff[i] == NULL) dataBuff[i] = ' ';
 		PutLogFileList(dataBuff, CLIENTUNKNOWNMSG_LOGFILE);
@@ -724,7 +734,7 @@ void CLoginServer::OnGameServerRead(WORD GSID)
 		}
 		if (GameServerSocket[GSID]->GSID >= 0) {
 			GameServer[GameServerSocket[GSID]->GSID]->IsBeingClosed = TRUE;
-			PutLogList("(!!!) A Game server is being closed!", WARN_MSG);
+			cLogging::Log("(!!!) A Game server is being closed!", WARN_MSG);
 		}
 		break;
 
@@ -782,13 +792,13 @@ void CLoginServer::OnGameServerRead(WORD GSID)
 		break;
 
 	default:
-		PutLogList("(!) Unknown packet rcvd from Game server socket!", WARN_MSG);
+		cLogging::Log("(!) Unknown packet rcvd from Game server socket!", WARN_MSG);
 
 		for (DWORD i = 0; i < dwMsgSize; i++) if (dataBuff[i] == NULL) dataBuff[i] = ' ';
 		PutLogFileList(dataBuff, GSUNKNOWNMSG_LOGFILE);
 		char cDump[1000];
 		wsprintf(cDump, " Unknown packet rcvd from Game server! message received! (0x%.8X)", *dwpMsgID);
-		PutLogList(cDump);
+		cLogging::Log(cDump);
 		PutLogFileList(cDump, GSUNKNOWNMSG_LOGFILE2);
 		break;
 
@@ -865,7 +875,7 @@ void CLoginServer::CloseGameServerSocket(WORD ID, BOOL log)
 		{
 			ZeroMemory(Txt100, sizeof(Txt100));
 			sprintf(Txt100, "(!) A GameServer socket was closed [%u].", ID);
-			PutLogList(Txt100, WARN_MSG);
+			cLogging::Log(Txt100, WARN_MSG);
 		}
 		if (GameServer[GSID] == NULL) return;
 		GameServer[GSID]->ConnectedSockets--;
@@ -886,7 +896,7 @@ void CLoginServer::CloseClientSocket(WORD ID, BOOL log)
 		{
 			ZeroMemory(Txt100, sizeof(Txt100));
 			sprintf(Txt100, "A client socket was closed [%u].", ID);
-			PutLogList(Txt100, WARN_MSG);
+			cLogging::Log(Txt100, WARN_MSG);
 		}
 		SAFEDELETE(ClientSocket[ID]);
 	}
@@ -921,7 +931,7 @@ BYTE CLoginServer::CheckAccountLogin(char *AccName, char *AccPwd, MYSQL myConn)
 		else if (IsSame(field[b]->name, "password") && !IsSame(myRow[b], AccPwd)) {
 			ZeroMemory(Txt, sizeof(Txt));
 			sprintf(Txt, "(!)Wrong password: Account[ %s ] - Correct Password[ %s ] - Password received[ %s ]", AccName, myRow[b], AccPwd);
-			PutLogList(Txt, WARN_MSG);
+			cLogging::Log(Txt, WARN_MSG);
 			SAFEFREERESULT(QueryResult);
 			return PASSWORDISWRONG;
 		}
@@ -1092,13 +1102,13 @@ void CLoginServer::RegisterGameServer(char *Data, BYTE ID)
 			GameServer[w]->ServerPort = ServerPort;
 			GameServer[w]->NumberOfMaps = NumberOfMaps;
 			GameServer[w]->InternalID = w;
-			PutLogList("(!) Maps registered:");
+			cLogging::Log("(!) Maps registered:");
 			for (BYTE b = 0; b < NumberOfMaps; b++) {
 				ZeroMemory(GameServer[w]->MapName[b], sizeof(GameServer[w]->MapName[b]));
 				SafeCopy(GameServer[w]->MapName[b], (Data + 32 + (11 * b)), 10);
 				ZeroMemory(Txt100, sizeof(Txt100));
 				sprintf(Txt100, "- %s", GameServer[w]->MapName[b]);
-				PutLogList(Txt100);
+				cLogging::Log(Txt100);
 			}
 			if (!ReceivedConfig) SendConfigToGS(ID);
 
@@ -1111,7 +1121,7 @@ void CLoginServer::RegisterGameServer(char *Data, BYTE ID)
 			*wp = w;
 			ZeroMemory(Txt100, sizeof(Txt100));
 			sprintf(Txt100, "(!) Game Server registered at ID[%u]-[%u].", w, GameServer[w]->InternalID);
-			PutLogList(Txt100);
+			cLogging::Log(Txt100);
 			SendMsgToGS(ID, SendData, 8);
 			return;
 		}
@@ -1126,9 +1136,9 @@ void CLoginServer::RegisterGameServerSocket(char *Data, BYTE ID)
 	GSID = bGetOffsetValue(Data, 0);
 	ZeroMemory(Txt100, sizeof(Txt100));
 	sprintf(Txt100, "(!) Trying to register socket on GS[%u].", GSID);
-	PutLogList(Txt100);
+	cLogging::Log(Txt100);
 	if (GameServer[GSID] == NULL) {
-		PutLogList("(!) GSID is not registered!", WARN_MSG);
+		cLogging::Log("(!) GSID is not registered!", WARN_MSG);
 		return;
 	}
 	for (BYTE b = 0; b < MAXSOCKETSPERSERVER; b++)
@@ -1141,12 +1151,12 @@ void CLoginServer::RegisterGameServerSocket(char *Data, BYTE ID)
 			GameServerSocket[ID]->IsRegistered = TRUE;
 			ZeroMemory(Txt100, sizeof(Txt100));
 			sprintf(Txt100, "(!) Registered Socket(%d) Index(%d) GSID(%d) SocketID(%d).", b, ID, GSID, b);
-			PutLogList(Txt100, INFO_MSG);
+			cLogging::Log(Txt100, INFO_MSG);
 			if (GameServer[GSID]->ConnectedSockets == MAXSOCKETSPERSERVER) {
 				GameServer[GSID]->IsInitialized = TRUE;
 				ZeroMemory(Txt100, sizeof(Txt100));
 				sprintf(Txt100, "(!) Gameserver(%s) registered!", GameServer[GSID]->ServerName);
-				PutLogList(Txt100, INFO_MSG);
+				cLogging::Log(Txt100, INFO_MSG);
 			}
 			return;
 		}
@@ -1164,13 +1174,13 @@ BOOL CLoginServer::ReadConfig(char *FileName)
 	pFile = fopen(File, "rt");
 	if (pFile == NULL) {
 		sprintf(Txt100, "(!) Cannot open configuration file [%s].", File);
-		PutLogList(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
-		PutLogList("(!!!) Stopped!", WARN_MSG);
+		cLogging::Log(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log("(!!!) Stopped!", WARN_MSG);
 		return FALSE;
 	}
 	else {
 		sprintf(Txt100, "(!) Reading configuration file [%s]...", File);
-		PutLogList(Txt100);
+		cLogging::Log(Txt100);
 		dwFileSize = filesize(pFile);
 
 		if (IsSame(FileName, "Item.cfg")) {
@@ -1240,8 +1250,8 @@ BOOL CLoginServer::ReadConfig(char *FileName)
 		}
 		else {
 			sprintf(Txt100, "(!) Cannot handle configuration file [%s].", File);
-			PutLogList(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
-			PutLogList("(!!!) Stopped!", WARN_MSG);
+			cLogging::Log(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
+			cLogging::Log("(!!!) Stopped!", WARN_MSG);
 		}
 
 		if (pFile != NULL) fclose(pFile);
@@ -1256,7 +1266,7 @@ void CLoginServer::SendCharList(char* AccountName, WORD ClientID, MYSQL myConn)
 
 	ZeroMemory(Txt100, sizeof(Txt100));
 	sprintf(Txt100, "(!) Getting character list for account [%s].", AccountName);
-	PutLogList(Txt100);
+	cLogging::Log(Txt100);
 	ZeroMemory(Txt500, sizeof(Txt500));
 	PutOffsetValue(Txt500, 0, DWORDSIZE, MSGID_RESPONSE_LOG);
 	PutOffsetValue(Txt500, 4, WORDSIZE, MSGTYPE_CONFIRM);
@@ -1800,10 +1810,10 @@ void CLoginServer::OnTimer()
 	}
 
 	if (bIsF1pressed && bIsF5pressed && !bConfigsUpdated) {
-		PutLogList("(*) Updating configuration files...", INFO_MSG);
-		if (!bReadAllConfig()) PutLogList("(!!!) ERROR! Couldn't read configuration files!", WARN_MSG);
+		cLogging::Log("(*) Updating configuration files...", INFO_MSG);
+		if (!bReadAllConfig()) cLogging::Log("(!!!) ERROR! Couldn't read configuration files!", WARN_MSG);
 		else {
-			PutLogList("(*) Done!", INFO_MSG);
+			cLogging::Log("(*) Done!", INFO_MSG);
 			SendUpdatedConfigToAllServers();
 		}
 		bConfigsUpdated = TRUE;
@@ -1826,7 +1836,7 @@ void CLoginServer::OnTimer()
 					else if ((dwTime - Client[w]->ForceDisconnRequestTime) > MAX_FORCEDISCONN_WAIT_TIME) {
 						ZeroMemory(log, sizeof(log));
 						sprintf(log, "(!) Client(%s) was deleted with no savedata due to no response from gameserver.", Client[w]->AccountName);
-						PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+						cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 						SAFEDELETE(Client[w]);
 					}
 				}
@@ -1842,7 +1852,7 @@ void CLoginServer::OnTimer()
 				if ((GameServer[w]->AliveResponseTime < dwTime) && (dwTime - GameServer[w]->AliveResponseTime) > MAX_GSALIVE_WAITINTERVAL) {
 					ZeroMemory(log, sizeof(log));
 					sprintf(log, "(!!!) There is no response from GameServer(%s)!", GameServer[w]->ServerName);
-					PutLogList(log, WARN_MSG);
+					cLogging::Log(log, WARN_MSG);
 				}
 				else if ((dwTime - GameServer[w]->TotalPlayersResponse) > INTERVALTOSEND_TOTALPLAYERS) {
 					ZeroMemory(log, sizeof(log));
@@ -2040,7 +2050,7 @@ void CLoginServer::ProcessRequestPlayerData(char *Data, BYTE GSID, MYSQL myConn)
 			*wp = LOGRESMSGTYPE_REJECT;
 			ZeroMemory(log, sizeof(log));
 			sprintf(log, "(!!!) Wrong data: Account(%s) pwd[%s/%s] charname[%s/%s] IP[%s/%s] GSID[%d/%d]", AccName, AccPwd, Client[AccountID]->AccountPassword, CharName, Client[AccountID]->CharName, ClientIP, Client[AccountID]->ClientIP, Client[AccountID]->ConnectedServerID, GameServerSocket[GSID]->GSID);
-			PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+			cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 			SAFEDELETE(Client[AccountID]);
 		}
 		/*      else if(!IsSame(Client[AccountID]->ClientIP, "127.0.0.1") && !IsSame(ClientIP, Client[AccountID]->ClientIP))
@@ -2048,7 +2058,7 @@ void CLoginServer::ProcessRequestPlayerData(char *Data, BYTE GSID, MYSQL myConn)
 		*wp = LOGRESMSGTYPE_REJECT;
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!!!) IP mismatch: Account(%s) IP[%s/%s]", AccName, ClientIP, Client[AccountID]->ClientIP);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 		SAFEDELETE(Client[AccountID]);
 		}*/
 		else
@@ -2069,7 +2079,7 @@ void CLoginServer::ProcessRequestPlayerData(char *Data, BYTE GSID, MYSQL myConn)
 		*wp = LOGRESMSGTYPE_REJECT;
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Character(%s) data error: account not initialized!", CharName);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 	}
 	SendMsgToGS(GSID, SendBuff, 16 + CharInfoSize);
 }
@@ -2110,7 +2120,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 	if (NRows == 0) {
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Character(%s) data error: character not found in the database!", CharName);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 		SAFEFREERESULT(QueryResult);
 		return 0;
 	}
@@ -2212,7 +2222,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 	if (CharID == NULL) {
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Character(%s) data error: CharID is null!", CharName);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 		SAFEFREERESULT(QueryResult);
 		return 0;
 	}
@@ -2221,7 +2231,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 			char log[200];
 			ZeroMemory(log, sizeof(log));
 			sprintf(log, "(!!!) Character(%s) tries to enter in game as GM in a non-GM account!!!", CharName);
-			PutLogList(log, WARN_MSG, TRUE, HACK_LOGFILE);
+			cLogging::Log(log, WARN_MSG, TRUE, HACK_LOGFILE);
 			SAFEFREERESULT(QueryResult);
 			return 0;
 		}
@@ -2236,7 +2246,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 	if (NRows < MAXSKILLS) {
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Character(%s) data error: number of skills(%d) don't match!", CharName, NRows);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 		SAFEFREERESULT(QueryResult);
 		return 0;
 	}
@@ -2469,11 +2479,11 @@ void CLoginServer::ProcessClientLogout(char *Data, BOOL save, BYTE GSID, MYSQL m
 		if (save) {
 			SaveCharacter(Data, myConn);
 			sprintf(LogTxt, "(!) Player(%s)[ID:%d] data saved properly.", CharName, AccountID);
-			PutLogList(LogTxt);
+			cLogging::Log(LogTxt);
 		}
 		else {
 			sprintf(LogTxt, "(!) Player(%s)[ID:%d] logout with no save.", CharName, AccountID);
-			PutLogList(LogTxt);
+			cLogging::Log(LogTxt);
 		}
 		if (CountLogout) { SAFEDELETE(Client[AccountID]); }
 		else {
@@ -2488,12 +2498,12 @@ void CLoginServer::ProcessClientLogout(char *Data, BOOL save, BYTE GSID, MYSQL m
 	else {
 		ZeroMemory(LogTxt, sizeof(LogTxt));
 		sprintf(LogTxt, "(!) Server change data-error for character(%s)!", CharName);
-		PutLogList(LogTxt, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(LogTxt, WARN_MSG, TRUE, ERROR_LOGFILE);
 		ZeroMemory(LogTxt, sizeof(LogTxt));
-		if (!IsAccountInUse(AccName, &AccountID)) PutLogList("(!) Account not even in use by the system. (deleted?)", WARN_MSG, TRUE, ERROR_LOGFILE);
+		if (!IsAccountInUse(AccName, &AccountID)) cLogging::Log("(!) Account not even in use by the system. (deleted?)", WARN_MSG, TRUE, ERROR_LOGFILE);
 		else {
 			sprintf(LogTxt, "(!) CharName[%s][%s], AccName[%s][%s], AccPwd[%s][%s]", CharName, Client[AccountID]->CharName, AccName, Client[AccountID]->AccountName, AccPwd, Client[AccountID]->AccountPassword);
-			PutLogList(LogTxt, WARN_MSG, TRUE, ERROR_LOGFILE);
+			cLogging::Log(LogTxt, WARN_MSG, TRUE, ERROR_LOGFILE);
 		}
 	}
 }
@@ -2519,14 +2529,14 @@ void CLoginServer::ConfirmCharEnterGame(char *Data, BYTE GSID)
 		{
 			ZeroMemory(log, sizeof(log));
 			sprintf(log, "(!!!) Wrong data: Account(%s) pwd[%s/%s] IP[%s/%s] GSID[%d/%d]", AccName, AccPwd, Client[AccountID]->AccountPassword, ClientIP, Client[AccountID]->ClientIP, Client[AccountID]->ConnectedServerID, GameServerSocket[GSID]->GSID);
-			PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+			cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 			RequestForceDisconnect(Client[AccountID], 10);
 		}
 		/*  else if(!IsSame(Client[AccountID]->ClientIP, "127.0.0.1") && !IsSame(ClientIP, Client[AccountID]->ClientIP))
 		{
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!!!) Client IP mismatch: Account(%s) IP[%s/%s]", AccName, ClientIP, Client[AccountID]->ClientIP);
-		PutLogList(log, WARN_MSG, TRUE, ERROR_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, ERROR_LOGFILE);
 		RequestForceDisconnect(Client[AccountID], 10);
 		}*/
 		else
@@ -2535,7 +2545,7 @@ void CLoginServer::ConfirmCharEnterGame(char *Data, BYTE GSID)
 			Client[AccountID]->Time = timeGetTime();
 			ZeroMemory(log, sizeof(log));
 			sprintf(log, "(!) Set character(%s)[ID:%d] status: playing.", Client[AccountID]->CharName, AccountID);
-			PutLogList(log);
+			cLogging::Log(log);
 		}
 	}
 }
@@ -2860,7 +2870,7 @@ void CLoginServer::ProcessItemSave(cItem *Item, DWORD CharID, MYSQL myConn)
 	{
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Item(%s) with duplied ID on the database! ID1(%d) ID2(%d) ID3(%d)", Item->ItemName, Item->TouchEffectValue1, Item->TouchEffectValue2, Item->TouchEffectValue3);
-		PutLogList(log, WARN_MSG, TRUE, HACK_LOGFILE);
+		cLogging::Log(log, WARN_MSG, TRUE, HACK_LOGFILE);
 	}
 }
 //=============================================================================
@@ -2917,12 +2927,12 @@ void CLoginServer::OnGateServerAccept(HWND hWnd)
 			GameServerSocket[w]->iGetPeerAddress(peerAddr);
 			ZeroMemory(Txt100, sizeof(Txt100));
 			sprintf(Txt100, "(*) Game-server socket[%u] IP(%s) accepted on gate server socket.", w, peerAddr);
-			PutLogList(Txt100);
+			cLogging::Log(Txt100);
 			if (ListenToAllAddresses == FALSE && IsAddrPermitted(peerAddr) == FALSE)
 			{
 				ZeroMemory(Txt100, sizeof(Txt100));
 				sprintf(Txt100, "(!) Game-server connection from non-authorized IP(%s) refused.", peerAddr);
-				PutLogList(Txt100, WARN_MSG, true, HACK_LOGFILE);
+				cLogging::Log(Txt100, WARN_MSG, true, HACK_LOGFILE);
 				CloseGameServerSocket(w);
 				return;
 			}
@@ -3345,7 +3355,7 @@ void CLoginServer::ProcessShutdown(DWORD dwTime)
 	if ((dwTime - dwShutdownInterval)>SHUTDOWN_INTERVAL_MSG) {
 		dwShutdownInterval = dwTime;
 		if (bShutDownMsgIndex == 0 || bShutDownMsgIndex == 1) {
-			PutLogList("(!!!) Sending server shutdown announcement!");
+			cLogging::Log("(!!!) Sending server shutdown announcement!");
 			ZeroMemory(SendBuff, sizeof(SendBuff));
 			PutOffsetValue(SendBuff, 0, DWORDSIZE, MSGID_SENDSERVERSHUTDOWNMSG);
 			PutOffsetValue(SendBuff, 6, WORDSIZE, bShutDownMsgIndex + 1);
@@ -3354,7 +3364,7 @@ void CLoginServer::ProcessShutdown(DWORD dwTime)
 			}
 		}
 		else {
-			PutLogList("(!!!) Shutting down all the servers!");
+			cLogging::Log("(!!!) Shutting down all the servers!");
 			ZeroMemory(SendBuff, sizeof(SendBuff));
 			PutOffsetValue(SendBuff, 0, DWORDSIZE, MSGID_GAMESERVERSHUTDOWNED);
 			for (w = 0; w<MAXGAMESERVERS; w++) if (GameServer[w] != NULL && GameServer[w]->IsInitialized) {
@@ -3826,7 +3836,7 @@ void CLoginServer::CreateNewAccount(char *Data, WORD ClientID, MYSQL myConn)
 	ZeroMemory(NewAccountQuiz, sizeof(NewAccountQuiz));
 	ZeroMemory(NewAccountAnswer, sizeof(NewAccountAnswer));
 	sprintf(Txt100, "(!) Create acc in progress.");
-	PutLogList(Txt100);
+	cLogging::Log(Txt100);
 
 	SafeCopy(NewAcc1, Data, 10);
 	SafeCopy(NewPass1, Data + 10, 10);

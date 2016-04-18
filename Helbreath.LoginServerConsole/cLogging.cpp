@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include "DIRECT.H"
 
+void cLogging::Log(char * cMsg, BYTE MsgLvl, BOOL PutOnFile, char * FileName)
+{
+	LogToFile(cMsg, FileName);
+	LogToConsole(cMsg);
+}
+
 void cLogging::LogToFile(char * cStr, char *FileName)
 {
 	LogToFileOld(cStr, FileName);

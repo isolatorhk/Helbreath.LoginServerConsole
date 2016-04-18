@@ -16,6 +16,7 @@
 #include <memory.h>
 #include "..\net\MsgCodes.h"
 #include "..\LoginServer.h"
+#include "..\cLogging.h"
 
 #define MAXPARTY		200
 

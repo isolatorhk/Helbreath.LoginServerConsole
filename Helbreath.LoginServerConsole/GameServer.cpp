@@ -40,7 +40,7 @@ CGameServer::~CGameServer()
 	}
 	ZeroMemory(Txt100, sizeof(Txt100));
 	wsprintf(Txt100, "(!!!) GameServer [%s] connection was lost!", ServerName);
-	PutLogList(Txt100, WARN_MSG);
+	cLogging::Log(Txt100, WARN_MSG);
 	ConnectedHGServers--;
 }
 //==============================================================================

@@ -45,7 +45,7 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 
 	default:
 		if ((message >= WM_ONCLIENTSOCKETEVENT) && (message < WM_ONCLIENTSOCKETEVENT + MAXCLIENTS)) {
-			//loginServer->OnClientSocketEvent(message, wParam, lParam);
+			loginServer->OnClientSocketEvent(message, wParam, lParam);
 		}
 		else if ((message >= WM_ONGAMESERVERSOCKETEVENT) && (message < WM_ONGAMESERVERSOCKETEVENT + MAXGAMESERVERSOCKETS)) {
 			loginServer->OnGameServerSocketEvent(message, wParam, lParam);

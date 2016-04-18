@@ -458,7 +458,9 @@ void CLoginServer::OnClientSocketEvent(UINT RcvMsg, WPARAM wParam, LPARAM lParam
 
 	iTmp = WM_ONCLIENTSOCKETEVENT;
 	user = (WORD)(RcvMsg - iTmp);
-	if (ClientSocket[user] == NULL) return;
+	if (ClientSocket[user] == NULL) {
+		return;
+	}
 	Result = ClientSocket[user]->iOnSocketEvent(wParam, lParam);
 	switch (Result) {
 	case XSOCKEVENT_SOCKETMISMATCH:
@@ -3819,6 +3821,8 @@ void CLoginServer::CreateNewAccount(char *Data, WORD ClientID, MYSQL myConn)
 {
 	char NewAccName[11], NewAcc1[11], CreateDate[25], NewEmailAddr[51], safeEmailAddr[51], safeAccQuiz[46], safeAnswer[21];
 	char NewAccountQuiz[46], NewAccountAnswer[21], GoodPass[25], NewPass1[11], Txt50[50], QueryConsult[500];
+	char CreateDataToLog[60];
+
 	DWORD *dwp;
 	st_mysql_res    *QueryResult = NULL;
 	WORD *wp;
@@ -3849,6 +3853,10 @@ void CLoginServer::CreateNewAccount(char *Data, WORD ClientID, MYSQL myConn)
 	ZeroMemory(CreateDate, sizeof(CreateDate));
 	sprintf(CreateDate, "%d-%d-%d %d:%d:%d", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute, SysTime.wSecond);
 
+	ZeroMemory(CreateDataToLog, sizeof(CreateDataToLog));
+	strcat(CreateDataToLog, "Trying to create account with date ");
+	strcat(CreateDataToLog, CreateDate);
+	cLogging::Log(CreateDataToLog);
 
 	ZeroMemory(Txt500, sizeof(Txt500));
 	dwp = (DWORD*)Txt500;

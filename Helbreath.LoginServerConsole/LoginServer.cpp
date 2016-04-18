@@ -2115,7 +2115,9 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 	ZeroMemory(GoodCharName, sizeof(GoodCharName));
 	MakeGoodName(GoodCharName, CharName);
 	sprintf(QueryConsult, "SELECT * FROM `char_database` WHERE `char_name` = '%s' LIMIT 1;", GoodCharName);
-	if (ProcessQuery(&myConn, QueryConsult) == -1) return 0;
+	if (ProcessQuery(&myConn, QueryConsult) == -1) {
+		return 0;
+	}
 	QueryResult = mysql_store_result(&myConn);
 	NFields = (BYTE)mysql_num_fields(QueryResult);
 	NRows = (WORD)mysql_num_rows(QueryResult);

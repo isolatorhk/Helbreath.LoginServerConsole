@@ -48,8 +48,7 @@ public:
 	void ChangeDateIntoInt(char *date, WORD *year, BYTE *month, BYTE *day, BYTE *hour = NULL, BYTE *minute = NULL, BYTE *second = NULL);
 	BOOL IsAddrPermitted(char *addr);
 	void RegisterGameServer(char *Data, BYTE ID);
-	void RegisterGameServerSocket(char *Data, BYTE ID);
-	BOOL ReadConfig(char *FileName);
+	void RegisterGameServerSocket(char *Data, BYTE ID);	
 	BOOL bReadAllConfig();
 	void SendUpdatedConfigToAllServers();
 	void SendConfigToGS(BYTE ID);

@@ -30,6 +30,7 @@ CLoginServer::CLoginServer()
 	ItemCfg = Item2Cfg = Item3Cfg = BuildItemCfg = DupItemIDCfg = MagicCfg = NULL;
 	NoticementTxt = NPCCfg = PotionCfg = QuestCfg = SkillCfg = CraftingCfg = TeleportCfg = NULL;
 	m_pPartyManager = new class PartyManager(this);
+	gameConfiguration = new cGameConfiguration();
 }
 //=============================================================================
 CLoginServer::~CLoginServer()
@@ -108,31 +109,96 @@ BOOL CLoginServer::InitServer(HWND m_hwnd, MMRESULT m_Timer)
 BOOL CLoginServer::bReadAllConfig()
 {
 	SAFEDELETE(ItemCfg);
-	if (ReadConfig("Item.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Item.cfg")) {
+		return FALSE;
+	}
+	else {
+		ItemCfg = gameConfiguration->ItemCfg;
+	}
 	SAFEDELETE(Item2Cfg);
-	if (ReadConfig("Item2.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Item2.cfg")) {
+		return FALSE;
+	}
+	else {
+		Item2Cfg = gameConfiguration->Item2Cfg;
+	}
 	SAFEDELETE(Item3Cfg);
-	if (ReadConfig("Item3.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Item3.cfg")) {
+		return FALSE;
+	}
+	else {
+		Item3Cfg = gameConfiguration->Item3Cfg;
+	}
 	SAFEDELETE(BuildItemCfg);
-	if (ReadConfig("BuildItem.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("BuildItem.cfg")) {
+		return FALSE;
+	}
+	else {
+		BuildItemCfg = gameConfiguration->BuildItemCfg;
+	}
 	SAFEDELETE(DupItemIDCfg);
-	if (ReadConfig("DupItemID.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("DupItemID.cfg")) {
+		return FALSE;
+	}
+	else {
+		DupItemIDCfg = gameConfiguration->DupItemIDCfg;
+	}
 	SAFEDELETE(MagicCfg);
-	if (ReadConfig("Magic.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Magic.cfg")) {
+		return FALSE;
+	}
+	else {
+		MagicCfg = gameConfiguration->MagicCfg;
+	}
 	SAFEDELETE(NoticementTxt);
-	if (ReadConfig("noticement.txt") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("noticement.txt")) {
+		return FALSE;
+	}
+	else {
+		NoticementTxt = gameConfiguration->NoticementTxt;
+	}
 	SAFEDELETE(NPCCfg);
-	if (ReadConfig("NPC.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("NPC.cfg")) {
+		return FALSE;
+	}
+	else {
+		NPCCfg = gameConfiguration->NPCCfg;
+	}
 	SAFEDELETE(PotionCfg);
-	if (ReadConfig("potion.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("potion.cfg")) {
+		return FALSE;
+	}
+	else {
+		PotionCfg = gameConfiguration->PotionCfg;
+	}
 	SAFEDELETE(QuestCfg);
-	if (ReadConfig("Quest.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Quest.cfg")) {
+		return FALSE;
+	}
+	else {
+		QuestCfg = gameConfiguration->QuestCfg;
+	}
 	SAFEDELETE(SkillCfg);
-	if (ReadConfig("Skill.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Skill.cfg")) {
+		return FALSE;
+	}
+	else {
+		SkillCfg = gameConfiguration->SkillCfg;
+	}
 	SAFEDELETE(CraftingCfg);
-	if (ReadConfig("CraftItem.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("CraftItem.cfg")) {
+		return FALSE;
+	}
+	else {
+		CraftingCfg = gameConfiguration->CraftingCfg;
+	}
 	SAFEDELETE(TeleportCfg);
-	if (ReadConfig("Teleport.cfg") == FALSE) return FALSE;
+	if (!gameConfiguration->ReadConfig("Teleport.cfg")) {
+		return FALSE;
+	}
+	else {
+		TeleportCfg = gameConfiguration->TeleportCfg;
+	}
 	return TRUE;
 }
 //=============================================================================

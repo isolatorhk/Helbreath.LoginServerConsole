@@ -18,6 +18,7 @@
 #include "char\item\Item.h"
 #include "cLogging.h"
 #include "cServerTimer.h"
+#include "cGameConfiguration.h"
 
 //using namespace std;
 //=============================================================================
@@ -129,6 +130,8 @@ public:
 	HWND hWnd;
 	MMRESULT Timer;
 	cServerTimer *serverTimer;
+	cGameConfiguration *gameConfiguration;
+
 	//timeGetTime for intervals on the OnTimer function
 	DWORD           KeyDownTimer, mySQLTimer, mySQLdbRepairTimer, mySQLdbOptimizeTimer, CheckAccountsTimer;
 };

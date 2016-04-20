@@ -1,6 +1,10 @@
 # Logs
 *.log
 
+# Packages (FAKE)
+/packages
+/.fake
+
 # User-specific files
 *.suo
 *.user

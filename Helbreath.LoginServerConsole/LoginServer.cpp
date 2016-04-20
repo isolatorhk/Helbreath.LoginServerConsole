@@ -1067,8 +1067,9 @@ void CLoginServer::RegisterGameServer(char *Data, BYTE ID)
 				sprintf(Txt100, "- %s", GameServer[w]->MapName[b]);
 				cLogging::Log(Txt100);
 			}
-			if (!ReceivedConfig) SendConfigToGS(ID);
-
+			if (!ReceivedConfig) {
+				SendConfigToGS(ID);
+			}
 			ZeroMemory(SendData, sizeof(SendData));
 			dwp = (DWORD*)SendData;
 			*dwp = MSGID_RESPONSE_REGISTERGAMESERVER;
@@ -1280,9 +1281,15 @@ void CLoginServer::SendMsgToClient(WORD ClientID, char * cData, DWORD dwSize, ch
 //=============================================================================
 void CLoginServer::SendMsgToGS(WORD GSID, char * cData, DWORD dwSize, char cKey, BOOL log)
 {
-	if (GSID >= MAXGAMESERVERSOCKETS) return;
-	if (GameServerSocket[GSID] == NULL || GameServer[GameServerSocket[GSID]->GSID] == NULL) return;
-	else GameServer[GameServerSocket[GSID]->GSID]->SendMsg(cData, dwSize, cKey, log);
+	if (GSID >= MAXGAMESERVERSOCKETS) {
+		return;
+	}
+	if (GameServerSocket[GSID] == NULL || GameServer[GameServerSocket[GSID]->GSID] == NULL) {
+		return;
+	}
+	else {
+		GameServer[GameServerSocket[GSID]->GSID]->SendMsg(cData, dwSize, cKey, log);
+	}
 }
 //=============================================================================
 void CLoginServer::SendMsgToAllGameServers(int iClientH, char *pData, DWORD dwMsgSize, BOOL bIsOwnSend)

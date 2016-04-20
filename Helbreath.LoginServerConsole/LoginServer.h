@@ -18,6 +18,7 @@
 #include "char\item\Item.h"
 #include "cLogging.h"
 #include "cServerTimer.h"
+#include "cGameConfiguration.h"
 
 //using namespace std;
 //=============================================================================
@@ -47,9 +48,7 @@ public:
 	void ChangeDateIntoInt(char *date, WORD *year, BYTE *month, BYTE *day, BYTE *hour = NULL, BYTE *minute = NULL, BYTE *second = NULL);
 	BOOL IsAddrPermitted(char *addr);
 	void RegisterGameServer(char *Data, BYTE ID);
-	void RegisterGameServerSocket(char *Data, BYTE ID);
-	BOOL ReadConfig(char *FileName);
-	BOOL bReadAllConfig();
+	void RegisterGameServerSocket(char *Data, BYTE ID);		
 	void SendUpdatedConfigToAllServers();
 	void SendConfigToGS(BYTE ID);
 	void SendCharList(char* AccountName, WORD ClientID, MYSQL myConn);
@@ -118,9 +117,7 @@ public:
 	char            mySqlUser[21], mySqlPwd[21];
 	_ADDRESS         ListenAddress, mySqlAddress, PermittedAddress[MAXGAMESERVERS];
 	WORD            ListenPort, GateServerPort, mySqlPort;
-	BOOL            ListenToAllAddresses, mySQLAutoFixProcess, IsThreadMysqlBeingUsed;
-	char			*ItemCfg, *Item2Cfg, *Item3Cfg, *BuildItemCfg, *DupItemIDCfg, *MagicCfg,
-		*NoticementTxt, *NPCCfg, *PotionCfg, *QuestCfg, *SkillCfg, *CraftingCfg, *TeleportCfg;
+	BOOL            ListenToAllAddresses, mySQLAutoFixProcess, IsThreadMysqlBeingUsed;	
 	BOOL			bIsF1pressed, bIsF4pressed, bIsF5pressed;
 	BOOL			bServersBeingShutdown;
 	DWORD			dwShutdownInterval;
@@ -129,6 +126,8 @@ public:
 	HWND hWnd;
 	MMRESULT Timer;
 	cServerTimer *serverTimer;
+	cGameConfiguration *gameConfiguration;
+
 	//timeGetTime for intervals on the OnTimer function
 	DWORD           KeyDownTimer, mySQLTimer, mySQLdbRepairTimer, mySQLdbOptimizeTimer, CheckAccountsTimer;
 };

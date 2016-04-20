@@ -26,10 +26,9 @@ CLoginServer::CLoginServer()
 	bServersBeingShutdown = FALSE;
 	bShutDownMsgIndex = 0;
 	dwShutdownInterval = 0;
-	bConfigsUpdated = FALSE;
-	ItemCfg = Item2Cfg = Item3Cfg = BuildItemCfg = DupItemIDCfg = MagicCfg = NULL;
-	NoticementTxt = NPCCfg = PotionCfg = QuestCfg = SkillCfg = CraftingCfg = TeleportCfg = NULL;
+	bConfigsUpdated = FALSE;	
 	m_pPartyManager = new class PartyManager(this);
+	gameConfiguration = new cGameConfiguration();
 }
 //=============================================================================
 CLoginServer::~CLoginServer()
@@ -48,20 +47,7 @@ CLoginServer::~CLoginServer()
 	for (dw = 0; dw < MSGQUENESIZE; dw++) SAFEDELETE(MsgQuene[dw]);
 	SAFEDELETE(MainSocket);
 	SAFEDELETE(GateServerSocket);
-	_TermWinsock();
-	SAFEDELETE(ItemCfg);
-	SAFEDELETE(Item2Cfg);
-	SAFEDELETE(Item3Cfg);
-	SAFEDELETE(BuildItemCfg);
-	SAFEDELETE(DupItemIDCfg);
-	SAFEDELETE(MagicCfg);
-	SAFEDELETE(NoticementTxt);
-	SAFEDELETE(NPCCfg);
-	SAFEDELETE(PotionCfg);
-	SAFEDELETE(QuestCfg);
-	SAFEDELETE(SkillCfg);
-	SAFEDELETE(CraftingCfg);
-	SAFEDELETE(TeleportCfg);
+	_TermWinsock();	
 	SAFEDELETE(m_pPartyManager);
 }
 //=============================================================================
@@ -75,7 +61,7 @@ BOOL CLoginServer::InitServer(HWND m_hwnd, MMRESULT m_Timer)
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	if (!bReadAllConfig()) {
+	if (!gameConfiguration->LoadConfiguration()) {
 		cLogging::Log("Couldn't read all config files. \n");
 		return FALSE;
 	}
@@ -105,37 +91,6 @@ BOOL CLoginServer::InitServer(HWND m_hwnd, MMRESULT m_Timer)
 	return TRUE;
 }
 //=============================================================================
-BOOL CLoginServer::bReadAllConfig()
-{
-	SAFEDELETE(ItemCfg);
-	if (ReadConfig("Item.cfg") == FALSE) return FALSE;
-	SAFEDELETE(Item2Cfg);
-	if (ReadConfig("Item2.cfg") == FALSE) return FALSE;
-	SAFEDELETE(Item3Cfg);
-	if (ReadConfig("Item3.cfg") == FALSE) return FALSE;
-	SAFEDELETE(BuildItemCfg);
-	if (ReadConfig("BuildItem.cfg") == FALSE) return FALSE;
-	SAFEDELETE(DupItemIDCfg);
-	if (ReadConfig("DupItemID.cfg") == FALSE) return FALSE;
-	SAFEDELETE(MagicCfg);
-	if (ReadConfig("Magic.cfg") == FALSE) return FALSE;
-	SAFEDELETE(NoticementTxt);
-	if (ReadConfig("noticement.txt") == FALSE) return FALSE;
-	SAFEDELETE(NPCCfg);
-	if (ReadConfig("NPC.cfg") == FALSE) return FALSE;
-	SAFEDELETE(PotionCfg);
-	if (ReadConfig("potion.cfg") == FALSE) return FALSE;
-	SAFEDELETE(QuestCfg);
-	if (ReadConfig("Quest.cfg") == FALSE) return FALSE;
-	SAFEDELETE(SkillCfg);
-	if (ReadConfig("Skill.cfg") == FALSE) return FALSE;
-	SAFEDELETE(CraftingCfg);
-	if (ReadConfig("CraftItem.cfg") == FALSE) return FALSE;
-	SAFEDELETE(TeleportCfg);
-	if (ReadConfig("Teleport.cfg") == FALSE) return FALSE;
-	return TRUE;
-}
-//=============================================================================
 void CLoginServer::SendUpdatedConfigToAllServers()
 {
 	char SendBuff[5];
@@ -162,76 +117,76 @@ void CLoginServer::SendConfigToGS(BYTE ID)
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, ItemCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(ItemCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, Item2Cfg);
-	SendMsgToGS(ID, SendCfgData, strlen(Item2Cfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, Item3Cfg);
-	SendMsgToGS(ID, SendCfgData, strlen(Item3Cfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_BUILDITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, BuildItemCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(BuildItemCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_DUPITEMIDFILECONTENTS;
-	SafeCopy(SendCfgData + 6, DupItemIDCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(DupItemIDCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_MAGICCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, MagicCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(MagicCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NOTICEMENTFILECONTENTS;
-	SafeCopy(SendCfgData + 6, NoticementTxt);
-	SendMsgToGS(ID, SendCfgData, strlen(NoticementTxt) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NPCCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, NPCCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(NPCCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_PORTIONCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, PotionCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(PotionCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_QUESTCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, QuestCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(QuestCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_SKILLCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, SkillCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(SkillCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value) + 7);
 
 	*dwp = MSGID_CRAFTINGCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, CraftingCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(CraftingCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value) + 7);
 
 	*dwp = MSGID_TELEPORTLISTCONTENTS;
-	SafeCopy(SendCfgData + 6, TeleportCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(TeleportCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value) + 7);
 
 }
 //=============================================================================
@@ -1112,8 +1067,9 @@ void CLoginServer::RegisterGameServer(char *Data, BYTE ID)
 				sprintf(Txt100, "- %s", GameServer[w]->MapName[b]);
 				cLogging::Log(Txt100);
 			}
-			if (!ReceivedConfig) SendConfigToGS(ID);
-
+			if (!ReceivedConfig) {
+				SendConfigToGS(ID);
+			}
 			ZeroMemory(SendData, sizeof(SendData));
 			dwp = (DWORD*)SendData;
 			*dwp = MSGID_RESPONSE_REGISTERGAMESERVER;
@@ -1162,103 +1118,6 @@ void CLoginServer::RegisterGameServerSocket(char *Data, BYTE ID)
 			}
 			return;
 		}
-}
-//=============================================================================
-BOOL CLoginServer::ReadConfig(char *FileName)
-{
-	FILE * pFile;
-	DWORD  dwFileSize;
-	char   File[50], Txt100[100];
-
-	ZeroMemory(Txt100, sizeof(Txt100));
-	ZeroMemory(File, sizeof(File));
-	sprintf(File, "Config/%s", FileName);
-	pFile = fopen(File, "rt");
-	if (pFile == NULL) {
-		sprintf(Txt100, "(!) Cannot open configuration file [%s].", File);
-		cLogging::Log(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
-		cLogging::Log("(!!!) Stopped!", WARN_MSG);
-		return FALSE;
-	}
-	else {
-		sprintf(Txt100, "(!) Reading configuration file [%s]...", File);
-		cLogging::Log(Txt100);
-		dwFileSize = filesize(pFile);
-
-		if (IsSame(FileName, "Item.cfg")) {
-			ItemCfg = new char[dwFileSize + 2];
-			ZeroMemory(ItemCfg, dwFileSize + 2);
-			fread(ItemCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Item2.cfg")) {
-			Item2Cfg = new char[dwFileSize + 2];
-			ZeroMemory(Item2Cfg, dwFileSize + 2);
-			fread(Item2Cfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Item3.cfg")) {
-			Item3Cfg = new char[dwFileSize + 2];
-			ZeroMemory(Item3Cfg, dwFileSize + 2);
-			fread(Item3Cfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "BuildItem.cfg")) {
-			BuildItemCfg = new char[dwFileSize + 2];
-			ZeroMemory(BuildItemCfg, dwFileSize + 2);
-			fread(BuildItemCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "DupItemID.cfg")) {
-			DupItemIDCfg = new char[dwFileSize + 2];
-			ZeroMemory(DupItemIDCfg, dwFileSize + 2);
-			fread(DupItemIDCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Magic.cfg")) {
-			MagicCfg = new char[dwFileSize + 2];
-			ZeroMemory(MagicCfg, dwFileSize + 2);
-			fread(MagicCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "noticement.txt")) {
-			NoticementTxt = new char[dwFileSize + 2];
-			ZeroMemory(NoticementTxt, dwFileSize + 2);
-			fread(NoticementTxt, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "NPC.cfg")) {
-			NPCCfg = new char[dwFileSize + 2];
-			ZeroMemory(NPCCfg, dwFileSize + 2);
-			fread(NPCCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "potion.cfg")) {
-			PotionCfg = new char[dwFileSize + 2];
-			ZeroMemory(PotionCfg, dwFileSize + 2);
-			fread(PotionCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Quest.cfg")) {
-			QuestCfg = new char[dwFileSize + 2];
-			ZeroMemory(QuestCfg, dwFileSize + 2);
-			fread(QuestCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Skill.cfg")) {
-			SkillCfg = new char[dwFileSize + 2];
-			ZeroMemory(SkillCfg, dwFileSize + 2);
-			fread(SkillCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "CraftItem.cfg")) {
-			CraftingCfg = new char[dwFileSize + 2];
-			ZeroMemory(CraftingCfg, dwFileSize + 2);
-			fread(CraftingCfg, dwFileSize, 1, pFile);
-		}
-		else if (IsSame(FileName, "Teleport.cfg")) {
-			TeleportCfg = new char[dwFileSize + 2];
-			ZeroMemory(TeleportCfg, dwFileSize + 2);
-			fread(TeleportCfg, dwFileSize, 1, pFile);
-		}
-		else {
-			sprintf(Txt100, "(!) Cannot handle configuration file [%s].", File);
-			cLogging::Log(Txt100, WARN_MSG, TRUE, ERROR_LOGFILE);
-			cLogging::Log("(!!!) Stopped!", WARN_MSG);
-		}
-
-		if (pFile != NULL) fclose(pFile);
-		return TRUE;
-	}
 }
 //=============================================================================
 void CLoginServer::SendCharList(char* AccountName, WORD ClientID, MYSQL myConn)
@@ -1422,9 +1281,15 @@ void CLoginServer::SendMsgToClient(WORD ClientID, char * cData, DWORD dwSize, ch
 //=============================================================================
 void CLoginServer::SendMsgToGS(WORD GSID, char * cData, DWORD dwSize, char cKey, BOOL log)
 {
-	if (GSID >= MAXGAMESERVERSOCKETS) return;
-	if (GameServerSocket[GSID] == NULL || GameServer[GameServerSocket[GSID]->GSID] == NULL) return;
-	else GameServer[GameServerSocket[GSID]->GSID]->SendMsg(cData, dwSize, cKey, log);
+	if (GSID >= MAXGAMESERVERSOCKETS) {
+		return;
+	}
+	if (GameServerSocket[GSID] == NULL || GameServer[GameServerSocket[GSID]->GSID] == NULL) {
+		return;
+	}
+	else {
+		GameServer[GameServerSocket[GSID]->GSID]->SendMsg(cData, dwSize, cKey, log);
+	}
 }
 //=============================================================================
 void CLoginServer::SendMsgToAllGameServers(int iClientH, char *pData, DWORD dwMsgSize, BOOL bIsOwnSend)
@@ -1813,7 +1678,7 @@ void CLoginServer::OnTimer()
 
 	if (bIsF1pressed && bIsF5pressed && !bConfigsUpdated) {
 		cLogging::Log("(*) Updating configuration files...", INFO_MSG);
-		if (!bReadAllConfig()) cLogging::Log("(!!!) ERROR! Couldn't read configuration files!", WARN_MSG);
+		if (!gameConfiguration->LoadConfiguration()) cLogging::Log("(!!!) ERROR! Couldn't read configuration files!", WARN_MSG);
 		else {
 			cLogging::Log("(*) Done!", INFO_MSG);
 			SendUpdatedConfigToAllServers();

@@ -3,22 +3,19 @@
 #include "windows.h"
 #include "cLogging.h"
 #include "defs.hpp"
-#include <stdio.h>
 #include <vector>
+#include <map>
+#include <string>
+#include "cConfigurationFile.h"
 
 class cGameConfiguration
 {
 public:
-	std::vector<char*> ConfigurationFiles;	
-	char *ItemCfg, *Item2Cfg, *Item3Cfg, *BuildItemCfg, *DupItemIDCfg,
-		*MagicCfg, *NoticementTxt, *NPCCfg, *PotionCfg, *QuestCfg,
-		*SkillCfg, *CraftingCfg, *TeleportCfg;
-	BOOL LoadConfiguration();	
+	std::map<char*, cConfigurationFile*> ConfigurationFiles;	
+	BOOL LoadConfiguration();
 	cGameConfiguration();
 	~cGameConfiguration();
 private:
-	BOOL ReadConfig(char *FileName);
-	BOOL IsSame(char *c1, char *c2);
-	DWORD Filesize(FILE *stream);
+	std::vector<char*> ConfigurationFilesNames;
 };
 

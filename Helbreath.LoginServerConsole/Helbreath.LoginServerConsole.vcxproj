@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cApplicationStartup.cpp" />
+    <ClCompile Include="cConfigurationFile.cpp" />
     <ClCompile Include="cGameConfiguration.cpp" />
     <ClCompile Include="char\Client.cpp" />
     <ClCompile Include="char\item\Item.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cApplicationStartup.h" />
+    <ClInclude Include="cConfigurationFile.h" />
     <ClInclude Include="cGameConfiguration.h" />
     <ClInclude Include="char\Client.h" />
     <ClInclude Include="char\item\Item.h" />

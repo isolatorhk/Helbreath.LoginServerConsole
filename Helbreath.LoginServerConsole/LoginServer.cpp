@@ -117,76 +117,76 @@ void CLoginServer::SendConfigToGS(BYTE ID)
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ItemCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ItemCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->Item2Cfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->Item2Cfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->Item3Cfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->Item3Cfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_BUILDITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->BuildItemCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->BuildItemCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_DUPITEMIDFILECONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->DupItemIDCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->DupItemIDCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_MAGICCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->MagicCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->MagicCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NOTICEMENTFILECONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->NoticementTxt);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->NoticementTxt) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NPCCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->NPCCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->NPCCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_PORTIONCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->PotionCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->PotionCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_QUESTCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->QuestCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->QuestCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_SKILLCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->SkillCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->SkillCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value) + 7);
 
 	*dwp = MSGID_CRAFTINGCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->CraftingCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->CraftingCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value) + 7);
 
 	*dwp = MSGID_TELEPORTLISTCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->TeleportCfg);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->TeleportCfg) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value);
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value) + 7);
 
 }
 //=============================================================================

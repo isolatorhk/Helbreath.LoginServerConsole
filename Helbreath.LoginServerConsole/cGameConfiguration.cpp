@@ -1,5 +1,28 @@
 #include "cGameConfiguration.h"
 
+BOOL cGameConfiguration::LoadConfiguration()
+{
+	for (size_t i = 0; i < ConfigurationFiles.size(); i++)
+	{
+		if (!ReadConfig(ConfigurationFiles[i])) {
+			return false;	
+		}
+	}
+	return true;
+}
+
+cGameConfiguration::cGameConfiguration()
+{
+	ConfigurationFiles = { "Item.cfg", "Item2.cfg", "Item3.cfg", "BuildItem.cfg",
+		"DupItemID.cfg", "Magic.cfg", "noticement.txt", "NPC.cfg",
+		"potion.cfg", "Quest.cfg", "Skill.cfg", "CraftItem.cfg", "Teleport.cfg" };
+}
+
+cGameConfiguration::~cGameConfiguration()
+{
+
+}
+
 BOOL cGameConfiguration::ReadConfig(char * FileName)
 {
 	FILE * pFile;
@@ -95,15 +118,6 @@ BOOL cGameConfiguration::ReadConfig(char * FileName)
 		if (pFile != NULL) fclose(pFile);
 		return TRUE;
 	}
-}
-
-cGameConfiguration::cGameConfiguration()
-{
-}
-
-
-cGameConfiguration::~cGameConfiguration()
-{
 }
 
 BOOL cGameConfiguration::IsSame(char * c1, char * c2)

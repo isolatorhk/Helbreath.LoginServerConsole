@@ -4,17 +4,20 @@
 #include "cLogging.h"
 #include "defs.hpp"
 #include <stdio.h>
+#include <vector>
 
 class cGameConfiguration
 {
 public:
+	std::vector<char*> ConfigurationFiles;	
 	char *ItemCfg, *Item2Cfg, *Item3Cfg, *BuildItemCfg, *DupItemIDCfg,
 		*MagicCfg, *NoticementTxt, *NPCCfg, *PotionCfg, *QuestCfg,
 		*SkillCfg, *CraftingCfg, *TeleportCfg;
-	BOOL ReadConfig(char *FileName);
+	BOOL LoadConfiguration();	
 	cGameConfiguration();
 	~cGameConfiguration();
 private:
+	BOOL ReadConfig(char *FileName);
 	BOOL IsSame(char *c1, char *c2);
 	DWORD Filesize(FILE *stream);
 };

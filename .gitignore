@@ -4,6 +4,7 @@
 # Packages (FAKE)
 /packages
 /.fake
+/build
 
 # User-specific files
 *.suo

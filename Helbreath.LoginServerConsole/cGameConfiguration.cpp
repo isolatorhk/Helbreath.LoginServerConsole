@@ -1,5 +1,10 @@
 #include "cGameConfiguration.h"
 
+char * cGameConfiguration::GetConfigurationFileValue(char * fileName)
+{
+	return ConfigurationFiles.find(fileName)->second->Value;
+}
+
 BOOL cGameConfiguration::LoadConfiguration()
 {
 	std::map<char*, cConfigurationFile*>::iterator it = ConfigurationFiles.begin();
@@ -27,4 +32,5 @@ cGameConfiguration::cGameConfiguration()
 
 cGameConfiguration::~cGameConfiguration()
 {
+	delete(this);
 }

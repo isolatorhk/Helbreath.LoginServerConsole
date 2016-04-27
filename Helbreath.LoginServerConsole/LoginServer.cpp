@@ -117,76 +117,76 @@ void CLoginServer::SendConfigToGS(BYTE ID)
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Item.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Item.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item2.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Item2.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Item2.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Item3.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Item3.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Item3.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_BUILDITEMCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("BuildItem.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("BuildItem.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("BuildItem.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_DUPITEMIDFILECONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("DupItemID.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("DupItemID.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("DupItemID.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_MAGICCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Magic.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Magic.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Magic.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NOTICEMENTFILECONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("noticement.txt")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("noticement.txt"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("noticement.txt")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_NPCCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("NPC.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("NPC.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("NPC.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_PORTIONCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("potion.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("potion.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("potion.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_QUESTCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Quest.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Quest.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Quest.cfg")) + 7);
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_SKILLCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Skill.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Skill.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Skill.cfg")) + 7);
 
 	*dwp = MSGID_CRAFTINGCONFIGURATIONCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("CraftItem.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("CraftItem.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("CraftItem.cfg")) + 7);
 
 	*dwp = MSGID_TELEPORTLISTCONTENTS;
-	SafeCopy(SendCfgData + 6, gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value);
-	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->ConfigurationFiles.find("Teleport.cfg")->second->Value) + 7);
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Teleport.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Teleport.cfg")) + 7);
 
 }
 //=============================================================================

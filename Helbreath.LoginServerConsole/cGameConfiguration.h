@@ -10,12 +10,13 @@
 
 class cGameConfiguration
 {
-public:
-	std::map<char*, cConfigurationFile*> ConfigurationFiles;	
+public:		
+	char* GetConfigurationFileValue(char *fileName);
 	BOOL LoadConfiguration();
 	cGameConfiguration();
 	~cGameConfiguration();
 private:
+	std::map<char*, cConfigurationFile*> ConfigurationFiles;
 	std::vector<char*> ConfigurationFilesNames;
 };
 

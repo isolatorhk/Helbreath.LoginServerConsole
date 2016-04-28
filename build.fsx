@@ -21,7 +21,7 @@ trace "Copying from build to debug"
 Target "BuildApp" (fun _ ->
 trace "--- Building app --- "
 !! "Helbreath.LoginServerConsole/*.vcxproj"
- |> MSBuild "" "Build" ["Configuration", "Debug"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../build"]
+ |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../build"]
  |> Log "AppBuild-Output: "
 )
 

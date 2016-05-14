@@ -21,7 +21,7 @@ cGameConfiguration::cGameConfiguration()
 {	
 	this->ConfigurationFilesNames = { "Item.cfg", "Item2.cfg", "Item3.cfg",
 		"BuildItem.cfg", "DupItemID.cfg", "Magic.cfg", "noticement.txt", "NPC.cfg",
-		"potion.cfg", "Quest.cfg", "Skill.cfg", "CraftItem.cfg", "Teleport.cfg" };
+		"potion.cfg", "Quest.cfg", "Skill.cfg", "CraftItem.cfg", "Teleport.cfg", "Item4.cfg" };
 
 	for (size_t i = 0; i < ConfigurationFilesNames.size(); i++)
 	{

@@ -134,6 +134,12 @@ void CLoginServer::SendConfigToGS(BYTE ID)
 
 	ZeroMemory(SendCfgData, sizeof(SendCfgData));
 	dwp = (DWORD*)SendCfgData;
+	*dwp = MSGID_ITEMCONFIGURATIONCONTENTS;
+	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("Item4.cfg"));
+	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("Item4.cfg")) + 7);
+
+	ZeroMemory(SendCfgData, sizeof(SendCfgData));
+	dwp = (DWORD*)SendCfgData;
 	*dwp = MSGID_BUILDITEMCONFIGURATIONCONTENTS;
 	SafeCopy(SendCfgData + 6, gameConfiguration->GetConfigurationFileValue("BuildItem.cfg"));
 	SendMsgToGS(ID, SendCfgData, strlen(gameConfiguration->GetConfigurationFileValue("BuildItem.cfg")) + 7);

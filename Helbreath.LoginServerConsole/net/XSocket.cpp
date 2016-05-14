@@ -51,7 +51,10 @@ BOOL XSocket::bInitBufferSize(DWORD dwBufferSize)
 {
 	SAFEDELETE(m_pRcvBuffer);
 	SAFEDELETE(m_pSndBuffer);
+
+#ifdef _DEBUG
 	cLogging::Log("bInitBufferSize");
+#endif
 
 	m_pRcvBuffer = new char[dwBufferSize+8];
 	if (m_pRcvBuffer == NULL) return FALSE;
@@ -67,7 +70,10 @@ BOOL XSocket::bInitBufferSize(DWORD dwBufferSize)
 int XSocket::iOnSocketEvent(WPARAM wParam, LPARAM lParam)
 {
  int WSAEvent;
+
+#ifdef _DEBUG
  cLogging::Log("iOnSocketEvent");
+#endif // _DEBUG
 	if (m_cType != XSOCK_NORMALSOCK) return XSOCKEVENT_SOCKETMISMATCH;
 	if (m_cType == NULL) return XSOCKEVENT_NOTINITIALIZED;
 
@@ -114,7 +120,10 @@ BOOL XSocket::bConnect(char * pAddr, int iPort, unsigned int uiMsg)
  u_long          arg;
  int             iRet;
  DWORD			 dwOpt;
+
+#ifdef _DEBUG
  cLogging::Log("bConnect");
+#endif // _DEBUG
 	if (m_cType == XSOCK_LISTENSOCK) return FALSE;
 	if (m_Sock  != INVALID_SOCKET) closesocket(m_Sock);
 
@@ -344,7 +353,11 @@ int XSocket::_iSendUnsentData()
 {
  int iRet;
  char * pTemp;
+
+#ifdef _DEBUG
  cLogging::Log("_iSendUnsentData");
+#endif // DEBUG
+
 	while (m_pUnsentDataList[m_sHead] != NULL) {
 
 		iRet = _iSend_ForInternalUse(m_pUnsentDataList[m_sHead], m_iUnsentDataSize[m_sHead]);
@@ -419,7 +432,9 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey, BOOL log)
 BOOL XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg)
 {
  SOCKADDR_IN	 saTemp;
+#ifdef _DEBUG
  cLogging::Log("bListen");
+#endif // _DEBUG
 	if (m_cType != NULL) return FALSE;
 	if (m_Sock  != INVALID_SOCKET) closesocket(m_Sock);
 
@@ -455,7 +470,11 @@ BOOL XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg)
  sockaddr		Addr;
  register int	iLength;
  DWORD			dwOpt;
+
+#ifdef _DEBUG
  cLogging::Log("bAccept");
+#endif // _DEBUG
+
 	if (m_cType != XSOCK_LISTENSOCK) return FALSE;
 	if (pXSock == NULL) return FALSE;
 
@@ -500,7 +519,9 @@ void XSocket::_CloseConn()
 //=============================================================================
 SOCKET XSocket::iGetSocket()
 {
+#ifdef _DEBUG
 	cLogging::Log("iGetSocket");
+#endif // _DEBUG	
 	return m_Sock;
 }
 //=============================================================================
@@ -510,7 +531,11 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey)
  DWORD  dwSize;
  register DWORD i;
  char cKey;
+
+#ifdef _DEBUG
  cLogging::Log("pGetRcvDataPointer");
+#endif // _DEBUG
+
 	cKey = m_pRcvBuffer[0];
 	if (pKey != NULL) *pKey = cKey;
 

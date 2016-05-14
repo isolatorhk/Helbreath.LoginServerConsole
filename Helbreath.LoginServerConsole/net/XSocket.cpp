@@ -156,7 +156,11 @@ int XSocket::_iOnRead()
 {
  int iRet, WSAErr;
  WORD  * wp;
+
+#ifdef _DEBUG
  cLogging::Log("_iOnRead");
+#endif
+
 	if (m_cStatus == XSOCKSTATUS_READINGHEADER) {
 
 		iRet = recv(m_Sock, (char *)(m_pRcvBuffer + m_dwTotalReadSize), m_dwReadSize, 0);
@@ -235,7 +239,9 @@ int XSocket::_iOnRead()
 int XSocket::_iSend(char * cData, int iSize, BOOL bSaveFlag)
 {
  int  iOutLen, iRet, WSAErr;
+#ifdef _DEBUG
  cLogging::Log("_iSend");
+#endif
 	if (m_pUnsentDataList[m_sHead] != NULL) {
 		if (bSaveFlag == TRUE) {
 			iRet = _iRegisterUnsentData(cData, iSize);
@@ -289,7 +295,11 @@ int XSocket::_iSend(char * cData, int iSize, BOOL bSaveFlag)
 int XSocket::_iSend_ForInternalUse(char * cData, int iSize)
 {
  int  iOutLen, iRet, WSAErr;
+
+#ifdef _DEBUG
  cLogging::Log("_iSend_ForInternalUse");
+#endif
+
 	iOutLen = 0;
 	while (iOutLen < iSize) {
 
@@ -312,7 +322,10 @@ int XSocket::_iSend_ForInternalUse(char * cData, int iSize)
 //=============================================================================
 int XSocket::_iRegisterUnsentData(char * cData, int iSize)
 {
+
+#ifdef _DEBUG
 	cLogging::Log("_iRegisterUnsentData");
+#endif // _DEBUG	
 	if (m_pUnsentDataList[m_sTail] != NULL) return 0;
 
 	m_pUnsentDataList[m_sTail] = new char[iSize];
@@ -365,8 +378,12 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey, BOOL log)
  int    iRet;
  DWORD  i;
  char   m_msgBuff[50000], dataBuff[50000];
+
+#ifdef _DEBUG
  cLogging::Log("iSendMsg");
-        if (dwSize > m_dwBufferSize) return XSOCKEVENT_MSGSIZETOOLARGE;
+#endif // _DEBUG
+
+    if (dwSize > m_dwBufferSize) return XSOCKEVENT_MSGSIZETOOLARGE;
 	if (m_cType != XSOCK_NORMALSOCK) return XSOCKEVENT_SOCKETMISMATCH;
 	if (m_cType == NULL) return XSOCKEVENT_NOTINITIALIZED;
 

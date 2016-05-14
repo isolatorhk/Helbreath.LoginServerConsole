@@ -5,6 +5,7 @@ open Fake
 
 // Properties
 let buildDir = "./build"
+let releaseDir = "./release"
 
 // Targets
 Target "Clean" (fun _ ->
@@ -21,7 +22,14 @@ trace "Copying from build to debug"
 Target "BuildApp" (fun _ ->
 trace "--- Building app --- "
 !! "Helbreath.LoginServerConsole/*.vcxproj"
- |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../build"]
+ |> MSBuild "" "Build" ["Configuration", "Debug"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../build"]
+ |> Log "AppBuild-Output: "
+)
+
+Target "BuildInReleaseApp" (fun _ ->
+trace "--- Building app --- "
+!! "Helbreath.LoginServerConsole/*.vcxproj"
+ |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../release"]
  |> Log "AppBuild-Output: "
 )
 
@@ -30,6 +38,6 @@ trace "--- Starting... --- "
 )
 
 // start build
-"Clean" ==> "BuildApp" ==> "CopyToDebugFolder" ==> "Default"
+"Clean" ==> "BuildApp" ==> "CopyToDebugFolder" ==> "BuildInReleaseApp" ==> "Default"
 
 RunTargetOrDefault "Default"

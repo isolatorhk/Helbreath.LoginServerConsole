@@ -21,6 +21,7 @@
     <ClCompile Include="cServerTimer.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="LoginServer.cpp" />
+    <ClCompile Include="LoginServerConfiguration.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="net\Msg.cpp" />
     <ClCompile Include="net\XSocket.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="defs.hpp" />
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="LoginServer.h" />
+    <ClInclude Include="LoginServerConfiguration.h" />
     <ClInclude Include="mysql\mysql.h" />
     <ClInclude Include="mysql\mysql_com.h" />
     <ClInclude Include="mysql\mysql_time.h" />
@@ -49,7 +51,7 @@
     <ClInclude Include="net\MsgCodes.h" />
     <ClInclude Include="net\XSocket.h" />
     <ClInclude Include="oldMain.h" />
-    <ClInclude Include="res\resource.h" />
+    <ClInclude Include="packages\json.hpp" />
     <ClInclude Include="StrTok.h" />
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +64,6 @@
   <ItemGroup>
     <Image Include="res\login.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="res\Resources.rc" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12C87534-DDAE-4FA3-8054-38B7BAE37042}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -75,13 +74,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

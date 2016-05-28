@@ -3,12 +3,17 @@
 #include "defs.hpp"
 #include <stdio.h>
 #include "DIRECT.H"
-#include <string>
 
 void cLogging::Log(char * cMsg, BYTE MsgLvl, BOOL PutOnFile, char * FileName)
 {	
 	LogToFile(cMsg, FileName);
 	LogToConsole(cMsg);
+}
+
+void cLogging::Log(std::string logMessage)
+{
+	LogToFile((char*)logMessage.c_str());
+	LogToConsole((char*)logMessage.c_str());
 }
 
 void cLogging::LogToFile(char * cStr, char *FileName)
@@ -102,7 +107,7 @@ void cLogging::LogToFileOld(char * cStr, char *FileName)
 	fclose(pFile);
 }
 
-BOOL cLogging::IsSame(char *c1, char *c2)
+bool cLogging::IsSame(char *c1, char *c2)
 {
 	DWORD size1, size2;
 

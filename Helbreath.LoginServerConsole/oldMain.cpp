@@ -199,8 +199,7 @@ BOOL InitApplication(HINSTANCE hInstance)
 	wc.lpfnWndProc = (WNDPROC)WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof(int);
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	wc.hInstance = hInstance;	
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)(6);
 	wc.lpszMenuName = NULL;

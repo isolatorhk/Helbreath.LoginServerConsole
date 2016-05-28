@@ -209,104 +209,21 @@ DWORD CLoginServer::filesize(FILE *stream)
 //=============================================================================
 BOOL CLoginServer::ReadProgramConfigFile(char * cFn)
 {
-	FILE *pFile;
-	DWORD  dwFileSize;
-	CStrTok *pStrTok;
-	char *token, *cp, LogBuff[100];
-	char seps[] = "= \t\n";
-
-	pFile = fopen(cFn, "rt");
-	if (pFile == NULL) {
-		cLogging::Log("(!) Cannot open configuration file.", WARN_MSG);
-		return FALSE;
+	LoginServerConfiguration *loginServerConfiguration = new LoginServerConfiguration();
+	if (!loginServerConfiguration->LoadConfiguration()) {
+		return false;
 	}
-	else {
-		dwFileSize = filesize(pFile);
-		cLogging::Log("(!) Reading configuration file...");
-		cp = new char[dwFileSize + 2];
-		ZeroMemory(cp, dwFileSize + 2);
-		fread(cp, dwFileSize, 1, pFile);
-
-		pStrTok = new CStrTok(cp, seps);
-		token = pStrTok->pGet();
-		while (token != NULL)
-		{
-			ZeroMemory(LogBuff, sizeof(LogBuff));
-			if (IsSame(token, "login-server-address"))
-			{
-				token = pStrTok->pGet();
-				SafeCopy(ListenAddress, token);
-				sprintf(LogBuff, "(*) Login server address : %s", ListenAddress);
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "login-server-port"))
-			{
-				token = pStrTok->pGet();
-				ListenPort = (WORD)atoi(token);
-				sprintf(LogBuff, "(*) Login server port : %u", ListenPort);
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "gate-server-port"))
-			{
-				token = pStrTok->pGet();
-				GateServerPort = (WORD)atoi(token);
-				sprintf(LogBuff, "(*) Gate Server port : %u", GateServerPort);
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "mysql-user"))
-			{
-				token = pStrTok->pGet();
-				SafeCopy(mySqlUser, token);
-				sprintf(LogBuff, "(*) mysql-user has been setup");
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "mysql-password"))
-			{
-				token = pStrTok->pGet();
-				SafeCopy(mySqlPwd, token);
-				sprintf(LogBuff, "(*) mysql-password has been setup");
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "mysql-address"))
-			{
-				token = pStrTok->pGet();
-				SafeCopy(mySqlAddress, token);
-				sprintf(LogBuff, "(*) mySql server address : %s", mySqlAddress);
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "mysql-server-port"))
-			{
-				token = pStrTok->pGet();
-				mySqlPort = (WORD)atoi(token);
-				sprintf(LogBuff, "(*) mySql Server port : %u", mySqlPort);
-				cLogging::Log(LogBuff);
-			}
-			else if (IsSame(token, "permitted-address"))
-			{
-				token = pStrTok->pGet();
-				for (BYTE b = 0; b < MAXGAMESERVERS; b++)
-					if (strlen(PermittedAddress[b]) == NULL)
-					{
-						SafeCopy(PermittedAddress[b], token);
-						if (ListenToAllAddresses == TRUE) ListenToAllAddresses = FALSE;
-						ZeroMemory(LogBuff, sizeof(LogBuff));
-						sprintf(LogBuff, "(*) IP [%s] added to permitted addresses list!", PermittedAddress[b]);
-						cLogging::Log(LogBuff);
-						break;
-					}
-			}
-			token = pStrTok->pGet();
-		}
-		SAFEDELETE(pStrTok);
-		SAFEDELETE(cp);
+	else {		
+		SafeCopy(ListenAddress, (char*)loginServerConfiguration->ListenAddress.c_str());
+		SafeCopy(mySqlAddress, (char*)loginServerConfiguration->MySqlAddress.c_str());
+		SafeCopy(mySqlUser, (char*)loginServerConfiguration->MySqlUser.c_str());
+		SafeCopy(mySqlPwd, (char*)loginServerConfiguration->MySqlPassword.c_str());
+		ListenPort = (WORD)loginServerConfiguration->ListenPort;
+		GateServerPort = (WORD)loginServerConfiguration->GateServerPort;
+		mySqlPort = (WORD)loginServerConfiguration->MySqlPort;
+		return true;
 	}
-	if (pFile != NULL) fclose(pFile);
-	if (strlen(ListenAddress) == 0 || ListenPort <= 0 || mySqlPort <= 0 || GateServerPort <= 0 || strlen(mySqlAddress) == 0)
-	{
-		cLogging::Log("(!!!) Info is missing in config file, unable to start server", WARN_MSG);
-		return FALSE;
-	}
-	return TRUE;
+	
 }
 //=============================================================================
 UINT CLoginServer::MyAux_Get_Error(struct st_mysql *pmySql)

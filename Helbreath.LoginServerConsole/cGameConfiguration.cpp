@@ -31,6 +31,5 @@ cGameConfiguration::cGameConfiguration()
 }
 
 cGameConfiguration::~cGameConfiguration()
-{
-	delete(this);
+{	
 }

@@ -13,12 +13,12 @@
 #include "net\MsgCodes.h"
 #include "net\Msg.h"
 #include "StrTok.h"
-#include "res\Resource.h"
 #include "char\PartyManager.h"
 #include "char\item\Item.h"
 #include "cLogging.h"
 #include "cServerTimer.h"
 #include "cGameConfiguration.h"
+#include "LoginServerConfiguration.h"
 
 //using namespace std;
 //=============================================================================
@@ -115,7 +115,7 @@ public:
 
 	int             QueneHead, QueneTail;
 	char            mySqlUser[21], mySqlPwd[21];
-	_ADDRESS         ListenAddress, mySqlAddress, PermittedAddress[MAXGAMESERVERS];
+	_ADDRESS        ListenAddress, mySqlAddress, PermittedAddress[MAXGAMESERVERS];
 	WORD            ListenPort, GateServerPort, mySqlPort;
 	BOOL            ListenToAllAddresses, mySQLAutoFixProcess, IsThreadMysqlBeingUsed;	
 	BOOL			bIsF1pressed, bIsF4pressed, bIsF5pressed;

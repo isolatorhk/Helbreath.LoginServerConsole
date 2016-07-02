@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `char_database` (
   `SP` int(11) unsigned NOT NULL DEFAULT '0',
   `EK` int(11) unsigned NOT NULL DEFAULT '0',
   `PK` int(11) unsigned NOT NULL DEFAULT '0',
+  `KillPoint` int(11) unsigned NOT NULL DEFAULT '0',
   `RewardGold` int(11) unsigned NOT NULL DEFAULT '0',
   `DownSkillID` tinyint(4) NOT NULL DEFAULT '-1',
   `Hunger` tinyint(4) unsigned NOT NULL DEFAULT '100',

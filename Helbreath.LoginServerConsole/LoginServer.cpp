@@ -1895,7 +1895,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 	MYSQL_FIELD *field[100];
 	MYSQL_ROW myRow, SkillRow[MAXSKILLS], ItemRow[MAXITEMS], BankItemRow[MAXBANKITEMS];
 	st_mysql_res    *QueryResult = NULL;
-	static long charIndexEnd = 450;
+	long charIndexEnd;
 
 	PutOffsetValue(Data, 200, BYTESIZE, 3);//lu_pool
 	ZeroMemory(QueryConsult, sizeof(QueryConsult));
@@ -2012,6 +2012,8 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 		else if (IsSame(field[f]->name, "Profile"))          SafeCopy(CharProfile, myRow[f]);
 		else if (IsSame(field[f]->name, "KillPoint"))		PutOffsetValue(Data, 450, DWORDSIZE, atoul(myRow[f]));
 	}
+	// Update this for every additional character attribute.
+	charIndexEnd = 454;
 	if (CharID == NULL) {
 		ZeroMemory(log, sizeof(log));
 		sprintf(log, "(!) Character(%s) data error: CharID is null!", CharName);

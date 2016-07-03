@@ -2010,10 +2010,7 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 		else if (IsSame(field[f]->name, "GizonItemUpgradeLeft"))PutOffsetValue(Data, 446, WORDSIZE, atoi(myRow[f]));
 		else if (IsSame(field[f]->name, "elo"))				PutOffsetValue(Data, 448, WORDSIZE, atoi(myRow[f]));
 		else if (IsSame(field[f]->name, "Profile"))          SafeCopy(CharProfile, myRow[f]);
-		else if (IsSame(field[f]->name, "KillPoint")) {
-			cLogging::Log("GetCharacterInfo: KP=" + std::to_string(atoul(myRow[f])));
-			PutOffsetValue(Data, 450, DWORDSIZE, atoul(myRow[f]));
-		}
+		else if (IsSame(field[f]->name, "KillPoint"))		PutOffsetValue(Data, 450, DWORDSIZE, atoul(myRow[f]));
 	}
 	if (CharID == NULL) {
 		ZeroMemory(log, sizeof(log));
@@ -2492,7 +2489,6 @@ void CLoginServer::SaveCharacter(char* Data, MYSQL myConn)
 	ApprColor = dwGetOffsetValue(cp, 242);
 	elo = wGetOffsetValue(cp, 246);
 	KillPoint = dwGetOffsetValue(cp, 248);
-	cLogging::Log("SaveCharacter: KP=" + std::to_string(KillPoint));
 	Index = (WORD)248 + 4;
 	ZeroMemory(MagicMastery, sizeof(MagicMastery));
 	SafeCopy(MagicMastery, cp + Index, 100);

@@ -2008,8 +2008,12 @@ WORD CLoginServer::GetCharacterInfo(char *CharName, char *Data, MYSQL myConn)
 			PutOffsetValue(Data, 442, DWORDSIZE, dwPartyID);
 		}
 		else if (IsSame(field[f]->name, "GizonItemUpgradeLeft"))PutOffsetValue(Data, 446, WORDSIZE, atoi(myRow[f]));
-		else if (IsSame(field[f]->name, "elo"))				PutOffsetValue(Data, charIndexEnd - WORDSIZE, WORDSIZE, atoi(myRow[f]));
+		else if (IsSame(field[f]->name, "elo"))				PutOffsetValue(Data, 448, WORDSIZE, atoi(myRow[f]));
 		else if (IsSame(field[f]->name, "Profile"))          SafeCopy(CharProfile, myRow[f]);
+		else if (IsSame(field[f]->name, "KillPoint")) {
+			cLogging::Log("GetCharacterInfo: KP=" + std::to_string(atoul(myRow[f])));
+			PutOffsetValue(Data, 450, DWORDSIZE, atoul(myRow[f]));
+		}
 	}
 	if (CharID == NULL) {
 		ZeroMemory(log, sizeof(log));
@@ -2385,7 +2389,7 @@ void CLoginServer::SaveCharacter(char* Data, MYSQL myConn)
 		IndexForItem, Index;
 	sDWORD Rating;
 	long elo;
-	DWORD  HP, MP, SP, Exp, EK, PK, RewardGold, TimeLeftShutUp, TimeLeftRating, TimeLeftForceRecall,
+	DWORD  HP, MP, SP, Exp, EK, PK, KillPoint, RewardGold, TimeLeftShutUp, TimeLeftRating, TimeLeftForceRecall,
 		TimeLeftFirmStaminar, QuestID, QuestRewardAmmount, Contribution, WarContribution, SpecialEventID,
 		ReserveTime, LockedMapTime, CrusadeGUID, ConstructionPoint, DeadPenaltyTime,
 		PartyID, SpecialAbilityTime, Appr1, Appr2, Appr3, Appr4, ApprColor, SkillSSN, CharID;
@@ -2487,26 +2491,30 @@ void CLoginServer::SaveCharacter(char* Data, MYSQL myConn)
 	Appr4 = wGetOffsetValue(cp, 238);
 	ApprColor = dwGetOffsetValue(cp, 242);
 	elo = wGetOffsetValue(cp, 246);
+	KillPoint = dwGetOffsetValue(cp, 248);
+	cLogging::Log("SaveCharacter: KP=" + std::to_string(KillPoint));
+	Index = (WORD)248 + 4;
 	ZeroMemory(MagicMastery, sizeof(MagicMastery));
-	SafeCopy(MagicMastery, cp + 250, 100);
+	SafeCopy(MagicMastery, cp + Index, 100);
 	for (w = 0; w < 24; w++)
 	{
-		SkillMastery = bGetOffsetValue(cp, 350 + w);
-		SkillSSN = dwGetOffsetValue(cp, 374 + (w * 4));
+		SkillMastery = bGetOffsetValue(cp, Index + 100 + w);
+		SkillSSN = dwGetOffsetValue(cp, Index + 100 + 24 + (w * 4));
 		ZeroMemory(QueryConsult, sizeof(QueryConsult));
 		sprintf(QueryConsult, "UPDATE `skill` SET `SkillMastery` = '%d',`SkillSSN` = '%lu' WHERE `CharID` = '%lu' AND `SkillID` = '%d' LIMIT 1;", SkillMastery, SkillSSN, CharID, w);
 		if (ProcessQuery(&myConn, QueryConsult) == -1) return;
 		pQueryResult = mysql_store_result(&myConn);
 		SAFEFREERESULT(pQueryResult);
 	}
-	NItems = bGetOffsetValue(cp, 474);
+	Index += 100 + 24 + 100;
+	NItems = bGetOffsetValue(cp, Index);
 	CurItemID = (GetLastInsertedItemID(myConn) + 1);
 	DeleteAllItemsFromChar(CharID, myConn, bIsBankModified);
 	ItemInfo = new cItem;
 	if (NItems > 0) {
 		itemQuery.append("INSERT INTO `item` ( `CharID` , `ItemName`, `Count` , `ItemType`, `ID1`, `ID2`, `ID3`, `Color`, `Effect1`, `Effect2`, `Effect3`, `LifeSpan`, `Attribute`, `ItemEquip`, `ItemPosX`, `ItemPosY`, `ItemID`) VALUES");
 		for (w = 0; w < NItems; w++) {
-			IndexForItem = (WORD)(475 + (w * 64));
+			IndexForItem = (WORD)(Index + 1 + (w * 64));
 			ZeroMemory(ItemInfo->ItemName, sizeof(ItemInfo->ItemName));
 			SafeCopy(ItemInfo->ItemName, cp + IndexForItem, 20);
 			if (strlen(ItemInfo->ItemName) == 0) continue;
@@ -2542,7 +2550,7 @@ void CLoginServer::SaveCharacter(char* Data, MYSQL myConn)
 		pQueryResult = mysql_store_result(&myConn);
 		SAFEFREERESULT(pQueryResult);
 	}
-	Index = (WORD)(475 + (NItems * 64));
+	Index += NItems * 64;
 	NBankItems = bGetOffsetValue(cp, Index);
 	if (NBankItems > 0) {
 		itemQuery.clear();
@@ -2587,14 +2595,15 @@ void CLoginServer::SaveCharacter(char* Data, MYSQL myConn)
 	Index += ((NBankItems * 59) + 1);
 	ZeroMemory(Profile, sizeof(Profile));
 	SafeCopy(Profile, (cp + Index), strlen(cp + Index));
+	Index += strlen(cp + Index);
 	ZeroMemory(QueryConsult, sizeof(QueryConsult));
 	ZeroMemory(GoodGuildName, sizeof(GoodGuildName));
 	MakeGoodName(GoodGuildName, GuildName);
 	ZeroMemory(GoodProfile, sizeof(GoodProfile));
 	MakeGoodName(GoodProfile, Profile);
 	sprintf(QueryConsult, "UPDATE `char_database` SET `LastSaveDate` = '%s',`ID1` = '%d',`ID2` = '%d',`ID3` = '%d',`Level` = '%d',`Strenght` = '%d',`Vitality` = '%d',`Dexterity` = '%d',`Intelligence` = '%d',`Magic` = '%d',`Agility` = '%d',`Luck` = '%d',`Exp` = '%lu',`Gender` = '%d',`Skin` = '%d',`HairStyle` = '%d',`HairColor` = '%d',`Underwear` = '%d',`ApprColor` = '%lu',`Appr1` = '%lu',`Appr2` = '%lu',`Appr3` = '%lu',`Appr4` = '%lu',`Nation` = '%s',`MapLoc` = '%s',`LocX` = '%d',`LocY` = '%d',`Profile` = '%s',`Contribution` = '%lu',`LeftSpecTime` = '%lu',`LockMapName` = '%s',`LockMapTime` = '%lu',`BlockDate` = '%s',`GuildName` = '%s',`GuildID` = '%d',`GuildRank` = '%d',`FightNum` = '%d',`FightDate` = '%lu',`FightTicket` = '%d',`QuestNum` = '%u',`QuestID` = '%u',`QuestCount` = '%u',`QuestRewType` = '%d',`QuestRewAmmount` = '%lu',\
-						  														`QuestCompleted` = '%d',`EventID` = '%lu',`WarCon` = '%lu',`CruJob` = '%d',`CruID` = '%lu',`CruConstructPoint` = '%lu', `Popularity` = '%li' ,`HP` = '%lu',`MP` = '%lu',`SP` = '%lu',`EK` = '%lu',`PK` = '%lu',`RewardGold` = '%lu',`DownSkillID` = '%d',`Hunger` = '%d',`LeftSAC` = '%u',`LeftShutupTime` = '%lu',`LeftPopTime` = '%lu',`LeftForceRecallTime` = '%lu',`LeftFirmStaminarTime` = '%lu',`LeftDeadPenaltyTime` = '%lu',`MagicMastery` = '%s',`PartyID` = '%lu',`GizonItemUpgradeLeft` = '%lu',`elo` = '%lu' WHERE `CharID` = '%lu' LIMIT 1;",
-		SaveDate, CharID1, CharID2, CharID3, Level, STR, VIT, DEX, INT, MAG, AGI, Luck, Exp, Sex, Skin, HairStyle, HairColor, Underwear, ApprColor, Appr1, Appr2, Appr3, Appr4, Location, MapName, MapLocX, MapLocY, GoodProfile, Contribution, SpecialAbilityTime, LockedMapName, LockedMapTime, BlockDate, GoodGuildName, GuildID, GuildRank, FightzoneNumber, ReserveTime, FightzoneTicketNumber, Quest, QuestID, CurQuestCount, QuestRewardType, QuestRewardAmmount, IsQuestCompleted, SpecialEventID, WarContribution, CrusadeDuty, CrusadeGUID, ConstructionPoint, Rating, HP, MP, SP, EK, PK, RewardGold, DownSkillIndex, HungerStatus, SuperAttackLeft, TimeLeftShutUp, TimeLeftRating, TimeLeftForceRecall, TimeLeftFirmStaminar, DeadPenaltyTime, MagicMastery, PartyID, Gizon, elo, CharID);
+						  														`QuestCompleted` = '%d',`EventID` = '%lu',`WarCon` = '%lu',`CruJob` = '%d',`CruID` = '%lu',`CruConstructPoint` = '%lu', `Popularity` = '%li' ,`HP` = '%lu',`MP` = '%lu',`SP` = '%lu',`EK` = '%lu',`PK` = '%lu',`KillPoint` = '%lu',`RewardGold` = '%lu',`DownSkillID` = '%d',`Hunger` = '%d',`LeftSAC` = '%u',`LeftShutupTime` = '%lu',`LeftPopTime` = '%lu',`LeftForceRecallTime` = '%lu',`LeftFirmStaminarTime` = '%lu',`LeftDeadPenaltyTime` = '%lu',`MagicMastery` = '%s',`PartyID` = '%lu',`GizonItemUpgradeLeft` = '%lu',`elo` = '%lu' WHERE `CharID` = '%lu' LIMIT 1;",
+		SaveDate, CharID1, CharID2, CharID3, Level, STR, VIT, DEX, INT, MAG, AGI, Luck, Exp, Sex, Skin, HairStyle, HairColor, Underwear, ApprColor, Appr1, Appr2, Appr3, Appr4, Location, MapName, MapLocX, MapLocY, GoodProfile, Contribution, SpecialAbilityTime, LockedMapName, LockedMapTime, BlockDate, GoodGuildName, GuildID, GuildRank, FightzoneNumber, ReserveTime, FightzoneTicketNumber, Quest, QuestID, CurQuestCount, QuestRewardType, QuestRewardAmmount, IsQuestCompleted, SpecialEventID, WarContribution, CrusadeDuty, CrusadeGUID, ConstructionPoint, Rating, HP, MP, SP, EK, PK, KillPoint, RewardGold, DownSkillIndex, HungerStatus, SuperAttackLeft, TimeLeftShutUp, TimeLeftRating, TimeLeftForceRecall, TimeLeftFirmStaminar, DeadPenaltyTime, MagicMastery, PartyID, Gizon, elo, CharID);
 	//PutLogFileList(QueryConsult, "Logs/SaveCharQuery.txt");
 	if (ProcessQuery(&myConn, QueryConsult) == -1) return;
 	pQueryResult = mysql_store_result(&myConn);
